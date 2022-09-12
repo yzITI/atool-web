@@ -7,7 +7,7 @@ function inc () {
 </script>
 
 <template>
-  <h1>Home</h1>
+  <h1>New Atool!</h1>
   <p>cot: {{ cot }}</p>
   <button @click="inc">Click Me</button>
 </template>
