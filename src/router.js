@@ -4,7 +4,8 @@ const index = {
   '/': () => import('./views/Home.vue'),
   '/run': () => import('./views/Run.vue'),
   '/login': () => import('./views/Login.vue'),
-  '/dev/home': () => import('./views/DevHome.vue')
+  '/dev/home': () => import('./views/DevHome.vue'),
+  '/dev/service/:id': () => import('./views/DevService.vue')
 }
 
 const routes = []

@@ -1,10 +1,9 @@
 <script setup>
-import Editor from '../components/Editor.vue'
-let code = $ref('')
 </script>
 
 <template>
-  <h1>New Atool!</h1>
-  <code>{{ code }}</code>
-  <Editor v-model="code"></Editor>
+  <div class="p-4">
+    <h1 class="font-bold text-2xl">New Atool!</h1>
+    <p>The new Atool is still under construction</p>
+  </div>
 </template>
