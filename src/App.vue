@@ -5,9 +5,9 @@ import state from './state.js'
 </script>
 
 <template>
-  <div class="w-full min-h-screen flex flex-col bg-gray-100">
+  <div class="w-full min-h-screen bg-gray-100">
     <Bar></Bar>
-    <div class="grow">
+    <div style="height: calc(100vh - 3rem);">
       <RouterView></RouterView>
     </div>
   </div>

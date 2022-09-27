@@ -1,7 +1,7 @@
 <script setup>
 import state from '../state.js'
 import srpc from '../utils/srpc.js'
-import { PlusIcon, CubeTransparentIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, CubeIcon, TagIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 const id = route.params.id
@@ -26,12 +26,27 @@ async function init () {
 </script>
 
 <template>
-  <div class="w-full min-h-full p-4" v-if="service">
-    <h2 class="text-2xl font-bold flex items-center">
-      <CubeTransparentIcon class="w-10 mr-2" />
-      <input v-model="service.title" class="bg-transparent appearance-none grow">
-    </h2>
-    <input v-model="service.description" class="text-gray-500 ml-2 my-1 bg-transparent appearance-none w-full">
-    <hr class="my-2">
+  <div class="h-full min-w-full overflow-x-auto overflow-y-hidden" v-if="service">
+    <div class="h-full w-80 p-4">
+      <div>
+        <h3 class="flex items-center font-bold text-lg">
+          <CubeIcon class="w-8 mx-2" style="min-width: 2rem;" />
+          {{ service.title }}
+        </h3>
+        <p class="text-gray-500 text-xs mx-2 my-1">{{ service.description }}</p>
+      </div>
+      <hr class="my-2">
+      <div v-for="(s, i) in steps" class="shadow all-transition hover:shadow-md bg-white rounded my-2 p-2 flex items-center justify-between text-gray-700">
+        <div>
+          <h3 class="flex items-center font-bold text-lg">
+            <TagIcon class="w-8 mx-2" style="min-width: 2rem;" />
+            {{ s.title }}
+          </h3>
+          <p class="text-gray-500 text-xs mx-2 my-1">{{ s.description }}</p>
+        </div>
+        <div class="flex items-center">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
