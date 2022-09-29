@@ -42,18 +42,18 @@ async function put () {
       Development
     </h2>
     <p v-if="!Object.keys(services).length" class="text-gray-500">You don't have any service now.</p>
-    <div v-for="(s, id) in services" class="shadow all-transition hover:shadow-md bg-white rounded my-2 p-2 flex items-center justify-between text-gray-700">
-      <div>
+    <div v-for="(s, id) in services" class="shadow all-transition hover:shadow-md bg-white rounded my-2 p-2 text-gray-700">
+      <div class="flex items-start justify-between">
         <h3 class="flex items-center font-bold text-lg">
           <CubeIcon class="w-8 mx-2" style="min-width: 2rem;" />
           {{ s.title }}
         </h3>
-        <p class="text-gray-500 text-xs mx-2 my-1">{{ s.description }}</p>
+        <div class="flex items-center">
+          <PencilSquareIcon class="w-6 mx-1 cursor-pointer text-blue-500" @click="edit = { ...s }" />
+          <SwatchIcon class="w-6 mx-1 cursor-pointer text-gray-500" @click="router.push('/dev/service/' + id)" />
+        </div>
       </div>
-      <div class="flex items-center">
-        <PencilSquareIcon class="w-6 mx-1 cursor-pointer text-blue-500" @click="edit = { ...s }" />
-        <SwatchIcon class="w-6 mx-1 cursor-pointer text-gray-500" @click="router.push('/dev/service/' + id)" />
-      </div>
+      <p class="text-gray-500 text-xs mx-2 my-1">{{ s.description }}</p>
     </div>
   </div>
   <button class="fixed right-10 bottom-10 rounded-full bg-blue-500 text-white p-3 shadow all-transition hover:shadow-md" @click="edit = { id: random() }"><PlusIcon class="w-8" /></button>
