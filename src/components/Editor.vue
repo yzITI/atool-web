@@ -2,7 +2,7 @@
 import monaco from '../utils/editorWorker.js'
 import debounce from '../utils/debounce.js'
 import { onMounted, onUnmounted, watch } from 'vue'
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue', 'language'])
 const emits = defineEmits(['update:modelValue'])
 
 let editorEl = $ref(), editor = null
@@ -15,8 +15,10 @@ watch(() => props.modelValue, v => {
 onMounted(() => {
   editor = monaco.editor.create(editorEl, {
     value: props.modelValue || '',
-    language: 'javascript',
-    theme: 'vs-dark'
+    language: props.language || 'javascript',
+    theme: 'vs-dark',
+    lineNumbersMinChars: 2,
+    tabSize: 2
   })
   editor.onDidChangeModelContent = debounce(() => {
     const v = editor.getValue()
