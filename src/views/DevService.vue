@@ -113,6 +113,12 @@ async function submitStep (id) {
           <span class="font-bold">Description</span>
           <textarea class="block w-full border rounded px-2 py-1 text-sm" rows="2" v-model="service.description" />
         </label>
+        <label class="block my-2">
+          <span class="font-bold">Entry</span>
+          <select class="block w-full border rounded px-2 py-1 text-sm" v-model="service.entry">
+            <option v-for="(s, id) in steps">{{ id }}</option>
+          </select>
+        </label>
         <label class="font-bold block">State</label>
         <p class="text-gray-500 text-xs">JSON object of service initial state</p>
         <Editor class="h-40 my-2" v-model="service.state" language="json" />
@@ -131,6 +137,16 @@ async function submitStep (id) {
         </label>
         <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
       </div>
+    </div>
+    <div class="shrink-0 p-4 my-2 mx-4 bg-white shadow rounded" style="width: 30rem;" v-if="steps[on]">
+      <h3 class="text-lg font-bold">Frontend Code</h3>
+      <Editor class="my-2" language="javascript" v-model="steps[on].fcode" />
+      <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+    </div>
+    <div class="shrink-0 p-4 my-2 mx-4 bg-white shadow rounded" style="width: 30rem;" v-if="steps[on]">
+      <h3 class="text-lg font-bold">Backend Code</h3>
+      <Editor class="my-2" language="javascript" v-model="steps[on].bcode" />
+      <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
     </div>
   </div>
 </template>
