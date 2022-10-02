@@ -5,7 +5,7 @@ const router = useRouter()
 </script>
 
 <template>
-  <div class="w-full h-12 px-4 bg-white shadow flex items-center justify-between">
+  <div class="w-full h-12 px-4 bg-white shadow flex items-center justify-between relative">
     <div>
       <h1 class="font-bold text-2xl cursor-pointer select-none" @click="router.push('/')">Atool</h1>
     </div>

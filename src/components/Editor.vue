@@ -32,5 +32,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-96" ref="editorEl"></div>
+  <div class="h-80" ref="editorEl"></div>
 </template>

@@ -74,7 +74,7 @@ async function submitStep (id) {
 
 <template>
   <div class="h-full min-w-full overflow-auto flex items-start" v-if="service">
-    <div class="h-full w-80 p-4 shrink-0">
+    <div class="h-full w-96 p-4 shrink-0">
       <div>
         <h3 class="flex items-center font-bold text-lg">
           <CubeIcon class="w-8 mx-2" style="min-width: 2rem;" />
@@ -102,7 +102,7 @@ async function submitStep (id) {
       </div>
     </div>
     <div class="w-96 shrink-0">
-      <div class="p-4 bg-white my-2 shadow rounded">
+      <div class="p-4 bg-white m-2 shadow rounded">
         <h3 class="font-bold text-lg">Edit Service</h3>
         <hr>
         <label class="block my-2">
@@ -121,10 +121,10 @@ async function submitStep (id) {
         </label>
         <label class="font-bold block">State</label>
         <p class="text-gray-500 text-xs">JSON object of service initial state</p>
-        <Editor class="h-40 my-2" v-model="service.state" language="json" />
+        <Editor class="h-48 my-2" v-model="service.state" language="json" />
         <button @click="submitService" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
       </div>
-      <div class="p-4 bg-white my-2 shadow rounded" v-if="on">
+      <div class="p-4 bg-white m-2 shadow rounded" v-if="on">
         <h3 class="font-bold text-lg">Edit Step <code class="bg-gray-200 px-1">{{ on }}</code></h3>
         <hr>
         <label class="block my-2">
@@ -138,15 +138,35 @@ async function submitStep (id) {
         <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
       </div>
     </div>
-    <div class="shrink-0 p-4 my-2 mx-4 bg-white shadow rounded" style="width: 30rem;" v-if="steps[on]">
-      <h3 class="text-lg font-bold">Frontend Code</h3>
-      <Editor class="my-2" language="javascript" v-model="steps[on].fcode" />
-      <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+    <div class="shrink-0 p-4 m-2 bg-white shadow rounded" style="width: 28rem;" v-if="steps[on]">
+      <h3 class="text-lg font-bold">Form</h3>
+      <p class="text-gray-500 text-sm">Under development</p>
     </div>
-    <div class="shrink-0 p-4 my-2 mx-4 bg-white shadow rounded" style="width: 30rem;" v-if="steps[on]">
-      <h3 class="text-lg font-bold">Backend Code</h3>
-      <Editor class="my-2" language="javascript" v-model="steps[on].bcode" />
-      <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+    <div class="shrink-0 w-96" v-if="steps[on]">
+      <div class="p-4 m-2 bg-white shadow rounded">
+        <h3 class="text-lg font-bold">Edit Form Block</h3>
+        <p class="text-gray-500 text-sm">Under development</p>
+      </div>
+      <div class="p-4 m-2 bg-white shadow rounded">
+        <h3 class="text-lg font-bold">Simulator</h3>
+        <p class="text-gray-500 text-sm">Under development</p>
+      </div>
+    </div>
+    <div class="shrink-0" style="width: 30rem;" v-if="steps[on]">
+      <div class="p-4 m-2 bg-white shadow rounded">
+        <h3 class="text-lg font-bold">Frontend Code</h3>
+        <Editor class="my-2" language="javascript" v-model="steps[on].fcode" />
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+      </div>
+      <div class="p-4 m-2 bg-white shadow rounded">
+        <h3 class="text-lg font-bold">Backend Code</h3>
+        <Editor class="my-2" language="javascript" v-model="steps[on].bcode" />
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+      </div>
+    </div>
+    <div class="w-96 shrink-0 p-4 m-2 bg-white shadow rounded">
+      <h3 class="text-lg font-bold">Service Permission</h3>
+      <p class="text-gray-500 text-sm">Under development</p>
     </div>
   </div>
 </template>
