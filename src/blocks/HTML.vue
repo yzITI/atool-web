@@ -1,8 +1,6 @@
 <script setup>
-import state from '../state.js'
-const props = defineProps(['i', 'j'])
-let step = $computed(() => state.run?.steps?.[props.i])
-let block = $computed(() => step?.form?.[props.j])
+const props = defineProps(['i', 'form', 'state'])
+let block = $computed(() => props.form[props.i])
 </script>
 
 <template>

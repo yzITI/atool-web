@@ -25,8 +25,8 @@ const blocks = {
 
 for (const k in blocks) {
   const b = blocks[k]
-  b.block = defineAsyncComponent({ loader: b.block, errorComponent, loadingComponent })
-  // b.panel = defineAsyncComponent({ loader: b.panel, errorComponent, loadingComponent })
+  if (b.block) b.block = defineAsyncComponent({ loader: b.block, errorComponent, loadingComponent })
+  if (b.panel) b.panel = defineAsyncComponent({ loader: b.panel, errorComponent, loadingComponent })
 }
 
 export default blocks
