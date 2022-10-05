@@ -16,7 +16,7 @@ onMounted(() => {
   editor = monaco.editor.create(editorEl, {
     value: props.modelValue || '',
     language: props.language || 'javascript',
-    theme: 'vs',
+    theme: 'vs-dark',
     lineNumbersMinChars: 2,
     tabSize: 2
   })

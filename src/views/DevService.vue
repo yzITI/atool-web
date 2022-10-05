@@ -1,4 +1,5 @@
 <script setup>
+import { watch } from 'vue'
 import state from '../state.js'
 import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
@@ -90,7 +91,13 @@ let editingType = $computed(() => {
 
 // following are for simulator
 
-let simulator = $ref({ state: {} })
+let simulator = $ref({ state: {}, json: '{}' })
+watch(() => simulator.state, v => {
+  simulator.json = JSON.stringify(simulator.state, null, 2)
+}, { deep: true })
+function updateState () {
+  simulator.state = JSON.parse(simulator.json)
+}
 </script>
 
 <template>
@@ -104,10 +111,10 @@ let simulator = $ref({ state: {} })
         <p class="text-gray-500 text-xs mx-2 my-1">{{ service.description }}</p>
       </div>
       <hr class="my-2">
-      <p class="text-xs text-gray-500">Type in step id to create a new step</p>
       <div class="flex items-center mb-4">
         <input type="text" v-model="newStep" class="rounded border bg-white px-2 py-1" placeholder="new step id">
-        <PlusIcon class="w-6 mx-2 text-blue-500 cursor-pointer" v-if="newStep && !steps[newStep]" @click="create" />
+        <button class="p-1 mx-2 rounded-full shadow all-transition hover:shadow-md" :class="newStep && !steps[newStep] ? 'bg-blue-500' : 'bg-gray-500'" @click="create"><PlusIcon class="w-5 text-white" /></button>
+        
       </div>
       <div v-for="(s, id) in steps" class="shadow all-transition hover:shadow-md bg-white rounded my-2 p-1 text-gray-700 cursor-pointer" @click="on = id" :class="on === id && 'ring'">
         <div class="flex items-start justify-between">
@@ -142,8 +149,8 @@ let simulator = $ref({ state: {} })
         </label>
         <label class="font-bold block text-gray-700">State</label>
         <p class="text-gray-500 text-xs">JSON object of service initial state</p>
-        <Editor class="h-48 my-2" v-model="service.state" language="json" />
-        <button @click="submitService" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+        <Editor class="h-40 my-2" v-model="service.state" language="json" />
+        <button @click="submitService" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Service</button>
       </div>
       <div class="p-4 bg-white m-2 shadow rounded" v-if="on">
         <h3 class="font-bold text-lg">Edit Step <code class="bg-gray-200 px-1">{{ on }}</code></h3>
@@ -156,13 +163,13 @@ let simulator = $ref({ state: {} })
           <span class="font-bold">Description</span>
           <textarea class="block w-full border rounded px-2 py-1 text-sm" rows="2" v-model="steps[on].description" />
         </label>
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
       </div>
     </div>
     <div class="shrink-0 p-4 m-2 bg-white shadow rounded" style="width: 28rem;" v-if="steps[on]">
       <div class="flex items-center justify-between mb-2">
         <h3 class="text-lg font-bold">Form</h3>
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
       </div>
       <FormEditor :form="steps[on].form" @edit="i => editing = i" />
     </div>
@@ -174,19 +181,23 @@ let simulator = $ref({ state: {} })
       </div>
       <div class="p-4 m-2 bg-white shadow rounded">
         <h3 class="text-lg font-bold">Simulator</h3>
-        <p class="text-gray-500 text-sm">Under development</p>
+        <hr class="mb-2">
+        <label class="font-bold block text-gray-700">Realtime State</label>
+        <p class="text-gray-500 text-xs">JSON object of service state</p>
+        <Editor class="h-40 my-2" language="json" v-model="simulator.json" />
+        <button @click="updateState" class="bg-yellow-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Update State</button>
       </div>
     </div>
     <div class="shrink-0" style="width: 30rem;" v-if="steps[on]">
       <div class="p-4 m-2 bg-white shadow rounded">
         <h3 class="text-lg font-bold">Frontend Code</h3>
         <Editor class="my-2" language="javascript" v-model="steps[on].fcode" />
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
       </div>
       <div class="p-4 m-2 bg-white shadow rounded">
         <h3 class="text-lg font-bold">Backend Code</h3>
         <Editor class="my-2" language="javascript" v-model="steps[on].bcode" />
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
       </div>
     </div>
     <div class="w-96 shrink-0 p-4 m-2 bg-white shadow rounded">
