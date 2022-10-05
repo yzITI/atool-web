@@ -1,7 +1,9 @@
 <script setup>
 import state from '../state.js'
 import srpc from '../utils/srpc.js'
+import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
+import FormEditor from '../components/FormEditor.vue'
 import { PlusIcon, CubeIcon, TagIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
@@ -21,20 +23,31 @@ async function init () {
   const res2 = await srpc.step.getAll(state.user.token, sid)
   if (!res2) Swal.fire('Error', '', 'error')
   else steps = res2
+  for (const id in steps) steps[id].form = JSON.parse(steps[id].form || '[]')
   state.loading = false
 }
+
+async function submitService () {
+  state.loading = true
+  const res = await srpc.service.put(state.user.token, sid, service)
+  state.loading = false
+  if (!res) return Swal.fire('Error', '', 'error')
+}
+
+// following are step operations
 
 let newStep = $ref(''), on = $ref('')
 
 async function create () {
   if (!newStep || steps[newStep]) return
   state.loading = true
-  const data = { title: 'Step ' + newStep, description: 'This is a new step' }
+  const data = { title: 'Step ' + newStep, description: 'This is a new step', form: '[]' }
   const res = await srpc.step.put(state.user.token, sid, newStep, data)
   state.loading = false
   if (!res) return Swal.fire('Error', '', 'error')
   data.step = newStep
   data.service = sid
+  data.form = []
   steps[newStep] = data
   newStep = ''
 }
@@ -56,20 +69,28 @@ async function del (id) {
   if (on === id) on = ''
 }
 
-async function submitService () {
-  state.loading = true
-  const res = await srpc.service.put(state.user.token, sid, service)
-  state.loading = false
-  if (!res) return Swal.fire('Error', '', 'error')
-}
-
 async function submitStep (id) {
   if (!steps[id]) return
   state.loading = true
+  steps[id].form = JSON.stringify(steps[id].form || [])
   const res = await srpc.step.put(state.user.token, sid, id, steps[id])
   state.loading = false
+  steps[id].form = JSON.parse(steps[id].form)
   if (!res) return Swal.fire('Error', '', 'error')
 }
+
+// following are form operations
+
+let editing = $ref(-1)
+let editingType = $computed(() => {
+  if (editing < 0 || !steps[on]) return false
+  const b = steps[on].form[editing]
+  return b?.type
+})
+
+// following are for simulator
+
+let simulator = $ref({ state: {} })
 </script>
 
 <template>
@@ -105,21 +126,21 @@ async function submitStep (id) {
       <div class="p-4 bg-white m-2 shadow rounded">
         <h3 class="font-bold text-lg">Edit Service</h3>
         <hr>
-        <label class="block my-2">
+        <label class="block my-2 text-gray-700">
           <span class="font-bold">Title</span>
           <input class="block w-full border rounded px-2 py-1" v-model="service.title">
         </label>
-        <label class="block my-2">
+        <label class="block my-2 text-gray-700">
           <span class="font-bold">Description</span>
           <textarea class="block w-full border rounded px-2 py-1 text-sm" rows="2" v-model="service.description" />
         </label>
-        <label class="block my-2">
+        <label class="block my-2 text-gray-700">
           <span class="font-bold">Entry</span>
           <select class="block w-full border rounded px-2 py-1 text-sm" v-model="service.entry">
             <option v-for="(s, id) in steps">{{ id }}</option>
           </select>
         </label>
-        <label class="font-bold block">State</label>
+        <label class="font-bold block text-gray-700">State</label>
         <p class="text-gray-500 text-xs">JSON object of service initial state</p>
         <Editor class="h-48 my-2" v-model="service.state" language="json" />
         <button @click="submitService" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
@@ -127,11 +148,11 @@ async function submitStep (id) {
       <div class="p-4 bg-white m-2 shadow rounded" v-if="on">
         <h3 class="font-bold text-lg">Edit Step <code class="bg-gray-200 px-1">{{ on }}</code></h3>
         <hr>
-        <label class="block my-2">
+        <label class="block my-2 text-gray-700">
           <span class="font-bold">Title</span>
           <input class="block w-full border rounded px-2 py-1" v-model="steps[on].title">
         </label>
-        <label class="block my-2">
+        <label class="block my-2 text-gray-700">
           <span class="font-bold">Description</span>
           <textarea class="block w-full border rounded px-2 py-1 text-sm" rows="2" v-model="steps[on].description" />
         </label>
@@ -139,13 +160,17 @@ async function submitStep (id) {
       </div>
     </div>
     <div class="shrink-0 p-4 m-2 bg-white shadow rounded" style="width: 28rem;" v-if="steps[on]">
-      <h3 class="text-lg font-bold">Form</h3>
-      <p class="text-gray-500 text-sm">Under development</p>
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-bold">Form</h3>
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit</button>
+      </div>
+      <FormEditor :form="steps[on].form" @edit="i => editing = i" />
     </div>
     <div class="shrink-0 w-96" v-if="steps[on]">
-      <div class="p-4 m-2 bg-white shadow rounded">
+      <div class="p-4 m-2 bg-white shadow rounded" v-if="editingType">
         <h3 class="text-lg font-bold">Edit Form Block</h3>
-        <p class="text-gray-500 text-sm">Under development</p>
+        <p class="text-xs text-gray-500 mb-2">Block type: <code>{{ editingType }}</code></p>
+        <Component :is="blocks[editingType]?.panel" :i="editing" :form="steps[on].form" :state="simulator.state" />
       </div>
       <div class="p-4 m-2 bg-white shadow rounded">
         <h3 class="text-lg font-bold">Simulator</h3>

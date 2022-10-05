@@ -6,8 +6,8 @@ const blocks = {
   html: {
     name: 'HTML',
     block: () => import('./HTML.vue'),
-    // panel: () => import('./HTMLPanel.vue'),
-    template: { html: 'html content' }
+    panel: () => import('./HTMLPanel.vue'),
+    template: { html: '<p>This is a paragraph!</p>' }
   }/*,
   input: {
     name: 'Input',
