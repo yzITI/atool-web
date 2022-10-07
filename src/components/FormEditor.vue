@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import Sortable from 'sortablejs/modular/sortable.core.esm.js'
-import { PencilSquareIcon, TrashIcon, Bars2Icon } from '@heroicons/vue/24/outline'
+import { PencilSquareIcon, TrashIcon, Bars2Icon, PlusIcon } from '@heroicons/vue/24/outline'
 import blocks from '../blocks/index.js'
 const props = defineProps(['form', 'state'])
 const emits = defineEmits(['edit'])
@@ -24,8 +24,8 @@ function edit (i) {
   emits('edit', i)
 }
 
-function create (b, type) {
-  props.form.push({ ...b.template, type })
+function create (b, _) {
+  props.form.push({ ...b.template, _ })
   edit(props.form.length - 1)
 }
 </script>
@@ -33,7 +33,7 @@ function create (b, type) {
 <template>
   <div ref="el">
     <div v-for="(b, i) in props.form" class="py-2 px-4 border-t border-gray-200 relative group" :key="b">
-      <Component :is="blocks[b.type]?.block" :i="i" :form="props.form" :state="props.state" />
+      <Component :is="blocks[b._]?.block" :i="i" :form="props.form" :state="props.state" />
       <div class="absolute right-1 top-2 flex items-center all-transition opacity-0 group-hover:opacity-100" :class="editing === i && 'opacity-100'">
         <PencilSquareIcon class="w-4 mx-2 cursor-pointer" :class="editing === i ? 'text-blue-500' : 'text-gray-500'" @click="edit(i)" />
         <Bars2Icon class="w-4 cursor-pointer handle text-gray-500" />
@@ -41,7 +41,7 @@ function create (b, type) {
       </div>
     </div>
   </div>
-  <div class="p-4 border-t border-gray-200 flex items-start flex-wrap">
-    <button v-for="(b, type) in blocks" class="rounded-full px-4 py-1 border bg-gray-100 all-transition hover:bg-gray-200 font-bold" @click="create(b, type)">+ {{ b.name }}</button>
+  <div class="p-2 border-t border-gray-200 flex items-start flex-wrap">
+    <button v-for="(b, _) in blocks" class="rounded-full px-4 py-1 m-1 border bg-gray-100 all-transition hover:bg-gray-200 font-bold flex items-center" @click="create(b, _)"><PlusIcon class="w-4 mr-1 text-gray-500" />{{ b.name }}</button>
   </div>
 </template>

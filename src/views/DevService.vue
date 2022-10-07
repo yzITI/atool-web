@@ -73,10 +73,10 @@ async function del (id) {
 async function submitStep (id) {
   if (!steps[id]) return
   state.loading = true
-  steps[id].form = JSON.stringify(steps[id].form || [])
-  const res = await srpc.step.put(state.user.token, sid, id, steps[id])
+  const s = { ...steps[id] }
+  s.form = JSON.stringify(s.form || [])
+  const res = await srpc.step.put(state.user.token, sid, id, s)
   state.loading = false
-  steps[id].form = JSON.parse(steps[id].form)
   if (!res) return Swal.fire('Error', '', 'error')
 }
 
@@ -86,7 +86,7 @@ let editing = $ref(-1)
 let editingType = $computed(() => {
   if (editing < 0 || !steps[on]) return false
   const b = steps[on].form[editing]
-  return b?.type
+  return b?._
 })
 
 // following are for simulator
@@ -114,7 +114,6 @@ function updateState () {
       <div class="flex items-center mb-4">
         <input type="text" v-model="newStep" class="rounded border bg-white px-2 py-1" placeholder="new step id">
         <button class="p-1 mx-2 rounded-full shadow all-transition hover:shadow-md" :class="newStep && !steps[newStep] ? 'bg-blue-500' : 'bg-gray-500'" @click="create"><PlusIcon class="w-5 text-white" /></button>
-        
       </div>
       <div v-for="(s, id) in steps" class="shadow all-transition hover:shadow-md bg-white rounded my-2 p-1 text-gray-700 cursor-pointer" @click="on = id" :class="on === id && 'ring'">
         <div class="flex items-start justify-between">
@@ -171,7 +170,7 @@ function updateState () {
         <h3 class="text-lg font-bold">Form</h3>
         <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
       </div>
-      <FormEditor :form="steps[on].form" @edit="i => editing = i" />
+      <FormEditor :form="steps[on].form" :state="simulator.state" @edit="i => editing = i" />
     </div>
     <div class="shrink-0 w-96" v-if="steps[on]">
       <div class="p-4 m-2 bg-white shadow rounded" v-if="editingType">

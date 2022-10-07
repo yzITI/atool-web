@@ -8,13 +8,13 @@ const blocks = {
     block: () => import('./HTML.vue'),
     panel: () => import('./HTMLPanel.vue'),
     template: { html: '<p>This is a paragraph!</p>' }
-  }/*,
+  },
   input: {
     name: 'Input',
     block: () => import('./Input.vue'),
-    // panel: () => import('./InputPanel.vue'),
-    template: { title: 'title', placeholder: 'placeholder' }
-  },
+    panel: () => import('./InputPanel.vue'),
+    template: { key: 'input', label: 'label', type: 'text', placeholder: 'placeholder', hint: '' }
+  },/*
   select: {
     name: 'Selector',
     block: () => import('./Select.vue'),
