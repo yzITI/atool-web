@@ -107,7 +107,7 @@ function updateState () {
           <CubeIcon class="w-8 mx-2" style="min-width: 2rem;" />
           {{ service.title }}
         </h3>
-        <p class="text-gray-500 text-xs mx-2 my-1">{{ service.description }}</p>
+        <code class="text-gray-500 text-xs mx-2 my-1">{{ sid }}</code>
       </div>
       <hr class="my-2">
       <div class="flex items-center mb-4">
