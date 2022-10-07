@@ -16,7 +16,7 @@ onMounted(() => {
   editor = monaco.editor.create(editorEl, {
     value: props.modelValue || '',
     language: props.language || 'javascript',
-    theme: 'vs-dark',
+    theme: 'vs',
     lineNumbersMinChars: 2,
     tabSize: 2
   })
@@ -32,5 +32,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-80" ref="editorEl"></div>
+  <div ref="editorEl"></div>
 </template>

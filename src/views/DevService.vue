@@ -28,11 +28,17 @@ async function init () {
   state.loading = false
 }
 
-async function submitService () {
+async function submitService (exit = true) {
   state.loading = true
   const res = await srpc.service.put(state.user.token, sid, service)
-  state.loading = false
+  if (exit) state.loading = false
   if (!res) return Swal.fire('Error', '', 'error')
+}
+
+async function submitAll () {
+  await submitService(false)
+  for (const id in steps) await submitStep(id, false)
+  state.loading = false
 }
 
 // following are step operations
@@ -41,14 +47,7 @@ let newStep = $ref(''), on = $ref('')
 
 async function create () {
   if (!newStep || steps[newStep]) return
-  state.loading = true
-  const data = { title: 'Step ' + newStep, description: 'This is a new step', form: '[]' }
-  const res = await srpc.step.put(state.user.token, sid, newStep, data)
-  state.loading = false
-  if (!res) return Swal.fire('Error', '', 'error')
-  data.step = newStep
-  data.service = sid
-  data.form = []
+  const data = { title: 'Step ' + newStep, description: 'This is a new step', step: newStep, service: sid, form: [] }
   steps[newStep] = data
   newStep = ''
 }
@@ -70,13 +69,13 @@ async function del (id) {
   if (on === id) on = ''
 }
 
-async function submitStep (id) {
+async function submitStep (id, exit = true) {
   if (!steps[id]) return
   state.loading = true
   const s = { ...steps[id] }
   s.form = JSON.stringify(s.form || [])
   const res = await srpc.step.put(state.user.token, sid, id, s)
-  state.loading = false
+  if (exit) state.loading = false
   if (!res) return Swal.fire('Error', '', 'error')
 }
 
@@ -114,6 +113,7 @@ function updateState () {
       <div class="flex items-center mb-4">
         <input type="text" v-model="newStep" class="rounded border bg-white px-2 py-1" placeholder="new step id">
         <button class="p-1 mx-2 rounded-full shadow all-transition hover:shadow-md" :class="newStep && !steps[newStep] ? 'bg-blue-500' : 'bg-gray-500'" @click="create"><PlusIcon class="w-5 text-white" /></button>
+        <button @click="submitAll" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 ml-4 text-sm font-bold text-white">Save All</button>
       </div>
       <div v-for="(s, id) in steps" class="shadow all-transition hover:shadow-md bg-white rounded my-2 p-1 text-gray-700 cursor-pointer" @click="on = id" :class="on === id && 'ring'">
         <div class="flex items-start justify-between">
@@ -130,7 +130,10 @@ function updateState () {
     </div>
     <div class="w-96 shrink-0">
       <div class="p-4 bg-white m-2 shadow rounded">
-        <h3 class="font-bold text-lg">Edit Service</h3>
+        <h3 class="font-bold text-lg flex items-center justify-between">
+          Edit Service
+          <button @click="submitService" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 mb-1 text-sm text-white">Save</button>
+        </h3>
         <hr>
         <label class="block my-2 text-gray-700">
           <span class="font-bold">Title</span>
@@ -149,10 +152,12 @@ function updateState () {
         <label class="font-bold block text-gray-700">State</label>
         <p class="text-gray-500 text-xs">JSON object of service initial state</p>
         <Editor class="h-40 my-2" v-model="service.state" language="json" />
-        <button @click="submitService" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Service</button>
       </div>
       <div class="p-4 bg-white m-2 shadow rounded" v-if="on">
-        <h3 class="font-bold text-lg">Edit Step <code class="bg-gray-200 px-1">{{ on }}</code></h3>
+        <h3 class="font-bold text-lg flex items-center justify-between">
+          <span>Edit Step <code class="bg-gray-200 px-1">{{ on }}</code></span>
+          <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 mb-1 text-sm text-white">Save</button>
+        </h3>
         <hr>
         <label class="block my-2 text-gray-700">
           <span class="font-bold">Title</span>
@@ -162,14 +167,13 @@ function updateState () {
           <span class="font-bold">Description</span>
           <textarea class="block w-full border rounded px-2 py-1 text-sm" rows="2" v-model="steps[on].description" />
         </label>
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
       </div>
     </div>
-    <div class="shrink-0 p-4 m-2 bg-white shadow rounded" style="width: 28rem;" v-if="steps[on]">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="text-lg font-bold">Form</h3>
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
-      </div>
+    <div class="shrink-0 p-4 m-2 bg-white shadow rounded" style="width: 32rem;" v-if="steps[on]">
+      <h3 class="font-bold text-lg flex items-center justify-between">
+        <span>Form</span>
+        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 mb-1 text-sm text-white">Save</button>
+      </h3>
       <FormEditor :form="steps[on].form" :state="simulator.state" @edit="i => editing = i" />
     </div>
     <div class="shrink-0 w-96" v-if="steps[on]">
@@ -189,14 +193,18 @@ function updateState () {
     </div>
     <div class="shrink-0" style="width: 30rem;" v-if="steps[on]">
       <div class="p-4 m-2 bg-white shadow rounded">
-        <h3 class="text-lg font-bold">Frontend Code</h3>
-        <Editor class="my-2" language="javascript" v-model="steps[on].fcode" />
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
+        <h3 class="font-bold text-lg flex items-center justify-between">
+          Frontend Code
+          <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 mb-1 text-sm text-white">Save</button>
+        </h3>
+        <Editor class="my-2" style="height: 35vh;" language="javascript" v-model="steps[on].fcode" />
       </div>
       <div class="p-4 m-2 bg-white shadow rounded">
-        <h3 class="text-lg font-bold">Backend Code</h3>
-        <Editor class="my-2" language="javascript" v-model="steps[on].bcode" />
-        <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Submit Step</button>
+        <h3 class="font-bold text-lg flex items-center justify-between">
+          Backend Code
+          <button @click="submitStep(on)" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 mb-1 text-sm text-white">Save</button>
+        </h3>
+        <Editor class="my-2" style="height: 35vh;" language="javascript" v-model="steps[on].bcode" />
       </div>
     </div>
     <div class="w-96 shrink-0 p-4 m-2 bg-white shadow rounded">

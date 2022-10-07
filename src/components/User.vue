@@ -1,5 +1,5 @@
 <script setup>
-import { UserCircleIcon, CodeBracketSquareIcon } from '@heroicons/vue/24/outline'
+import { UserCircleIcon, CubeIcon, CodeBracketSquareIcon } from '@heroicons/vue/24/outline'
 import Wrapper from './Wrapper.vue'
 import state from '../state'
 import { useRouter } from 'vue-router'
@@ -31,8 +31,8 @@ function signin () {
       <UserCircleIcon class="w-16 text-gray-500" />
       <h3 class="text-xl font-bold text-gray-800">{{ state.user.name }}</h3>
       <p class="text-xs text-gray-500 mt-1 mb-3">{{ state.user.id }}</p>
-      <button class="all-transition w-full text-gray-500 flex items-center px-6 py-3 border border-x-0 hover:bg-gray-50" @click="goto('/dev/home')">
-        <CodeBracketSquareIcon class="w-6 mr-2" />Development
+      <button class="all-transition w-full text-gray-500 flex items-center px-6 py-3 border border-x-0 hover:bg-gray-50">
+        <CubeIcon class="w-6 mr-2" />My Services
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
         <p class="cursor-pointer" @click="goto('/about')">About</p>
