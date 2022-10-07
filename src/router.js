@@ -16,6 +16,7 @@ router.beforeEach(() => { NProgress.start() })
 router.afterEach(() => {
   Swal.close()
   NProgress.done()
+  window.onmessage = () => {} // clean for sandbox
 })
 
 export default router

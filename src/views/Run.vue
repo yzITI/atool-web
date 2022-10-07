@@ -1,6 +1,7 @@
 <script setup>
 import { PlayIcon, TagIcon, CubeIcon } from '@heroicons/vue/24/outline'
 import state from '../state.js'
+import { run } from '../utils/sandbox.js'
 import srpc from '../utils/srpc.js'
 import Form from '../components/Form.vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -33,6 +34,24 @@ async function start () {
 }
 
 async function submit () {
+  state.loading = true
+  let ctx = { state: step.state }
+  if (step.fcode) {
+    const { isConfirmed } = await Swal.fire('warning', 'Code will be executed on your device', 'warning')
+    if (!isConfirmed) return state.loading = false
+    ctx = await new Promise(r => {
+      const ins = run(step.fcode, ctx)
+      ins.onReturn = r
+    })
+  }
+  ctx = await srpc.run.next(state.user?.token, sid, step.step, ctx)
+  state.loading = false
+  if (!ctx) return Swal.fire('Error', 'Step error', 'error')
+  if (!ctx.step && !ctx.err)  return Swal.fire('Completed', 'There is no next step', 'success')
+  if (!ctx.step && ctx.err)  return Swal.fire('Error', ctx.err, 'error')
+  ctx.form = JSON.parse(ctx.form || '[]')
+  ctx.state = JSON.parse(ctx.state || '{}')
+  step = ctx
 }
 </script>
 
