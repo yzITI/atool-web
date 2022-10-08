@@ -7,7 +7,7 @@ const types = ['checkbox', 'color', 'date', 'datetime-local', 'email', 'image', 
 <template>
   <label class="block my-2">
     <span class="font-bold block">Key<code class="font-normal text-xs text-gray-500 ml-2">state.{{ block.key }}</code></span>
-    <input class="border font-mono rounded px-2 py-1 w-full" type="text" placeholder="input label" v-model="block.key">
+    <input class="border font-mono rounded px-2 py-1 w-full" type="text" placeholder="input key" v-model="block.key">
   </label>
   <label class="block my-2">
     <span class="font-bold block">Label</span>
