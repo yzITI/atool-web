@@ -14,7 +14,14 @@ const blocks = {
     block: () => import('./Input.vue'),
     panel: () => import('./InputPanel.vue'),
     template: { key: 'input', label: 'label', type: 'text', placeholder: 'placeholder', hint: '' }
-  },/*
+  },
+  textarea: {
+    name: 'Textarea',
+    block: () => import('./Textarea.vue'),
+    panel: () => import('./TextareaPanel.vue'),
+    template: { key: 'textarea', label: 'label', cols: 40, rows: 8, placeholder: 'placeholder', hint: '' }
+  }
+  /*
   select: {
     name: 'Selector',
     block: () => import('./Select.vue'),
