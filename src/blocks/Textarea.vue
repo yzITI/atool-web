@@ -5,8 +5,8 @@ let block = $computed(() => props.form[props.i])
 
 <template>
   <label>
-    <span>{{ block.label }}</span>
-    <textarea class="mx-2 border rounded px-2 py-1" :rows="block.rows" :cols="block.cols" :placeholder="block.placeholder" v-model="props.state[block.key]"></textarea>
+    <span class="block">{{ block.label }}</span>
+    <p class="text-xs text-gray-500">{{ block.hint }}</p>
+    <textarea class="my-2 border rounded px-2 py-1 w-full" :rows="block.rows" :placeholder="block.placeholder" v-model="props.state[block.key]"></textarea>
   </label>
-  <p class="text-xs text-gray-500">{{ block.hint }}</p>
 </template>

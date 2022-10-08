@@ -19,7 +19,7 @@ const blocks = {
     name: 'Textarea',
     block: () => import('./Textarea.vue'),
     panel: () => import('./TextareaPanel.vue'),
-    template: { key: 'textarea', label: 'label', cols: 40, rows: 8, placeholder: 'placeholder', hint: '' }
+    template: { key: 'textarea', label: 'label', rows: 5, placeholder: 'placeholder', hint: '' }
   }
   /*
   select: {
