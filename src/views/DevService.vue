@@ -5,7 +5,7 @@ import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
 import FormEditor from '../components/FormEditor.vue'
-import { PlusIcon, CubeIcon, TagIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, CubeIcon, TagIcon, TrashIcon, LinkIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 const sid = route.params.id
@@ -26,6 +26,11 @@ async function init () {
   else steps = res2
   for (const id in steps) steps[id].form = JSON.parse(steps[id].form || '[]')
   state.loading = false
+}
+
+function copy () {
+  navigator.clipboard.writeText(window.origin + '/#/run/' + sid)
+  Swal.fire('Link Copied', 'Link to service is saved to clipboard', 'success')
 }
 
 async function submitService (exit = true) {
@@ -107,7 +112,10 @@ function updateState () {
           <CubeIcon class="w-8 mx-2" style="min-width: 2rem;" />
           {{ service.title }}
         </h3>
-        <code class="text-gray-500 text-xs mx-2 my-1">{{ sid }}</code>
+        <code class="text-gray-500 text-xs mx-2 my-1 flex items-center">
+          <LinkIcon class="w-3 mr-1 cursor-pointer" @click="copy" />
+          {{ sid }}
+        </code>
       </div>
       <hr class="my-2">
       <div class="flex items-center mb-4">
@@ -191,7 +199,7 @@ function updateState () {
         <button @click="updateState" class="bg-yellow-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">Update State</button>
       </div>
     </div>
-    <div class="shrink-0" style="width: 30rem;" v-if="steps[on]">
+    <div class="shrink-0" style="width: 40rem;" v-if="steps[on]">
       <div class="p-4 m-2 bg-white shadow rounded">
         <h3 class="font-bold text-lg flex items-center justify-between">
           Frontend Code
