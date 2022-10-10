@@ -7,11 +7,9 @@ let block = $computed(() => props.form[props.i])
 let newOption = $ref('')
 
 async function create () {
-  console.log(newOption)
-  if (!newOption || block.options[newOption]) return
-  block.options[newOption] = newOption
+  if (!newOption) return
+  block.options.push(newOption)
   newOption = ''
-  console.log(block.options)
 }
 </script>
 
@@ -25,15 +23,16 @@ async function create () {
     <input class="border rounded px-2 py-1 w-full" type="text" placeholder="select label" v-model="block.label">
   </label>
   <label class="block my-2">
-    <span class="font-bold block">Options</span>  
-    <input class="border rounded px-2 py-1" type="text" placeholder="input new option" v-model="newOption">
-    <button class="p-1 mx-2 rounded-full shadow all-transition hover:shadow-md" :class="newOption && !block.options[newOption] ? 'bg-blue-500' : 'bg-gray-500'" @click="create"><PlusIcon class="w-5 text-white" /></button>
-    <EditableList :list="block.options" item-class="bg-white py-1 px-2 border my-2 rounded flex-nowrap">
-    <template #item="{ elment: el, index: i }">      
-        <input class="grow" v-model="block.options[i]" placeholder="点击编辑选项内容">
-    </template>
+    <span class="font-bold block">Options</span>
+    <div class="flex items-center">
+      <input class="border rounded px-2 py-1" type="text" placeholder="input new option" v-model="newOption">
+      <PlusIcon class="w-7 ml-2 cursor-pointer" :class="newOption ? 'text-blue-500' : 'text-gray-500'" @click="create" />
+    </div>
+    <EditableList :list="block.options" item-class="bg-gray-50 py-1 px-2 border my-2 rounded flex-nowrap">
+      <template #item="{ elment: el, index: i }">      
+        <input class="grow bg-transparent" v-model="block.options[i]" placeholder="点击编辑选项内容">
+      </template>
     </EditableList> 
-    <!-- 这边有个小问题，如果list能修改那么选项就可能是一样的，那么通过下标定位的时候会不会有bug嘞？ -->
   </label>
   <label class="block my-2">
     <span class="font-bold block">Hint</span>

@@ -6,8 +6,8 @@ let block = $computed(() => props.form[props.i])
 <template>
   <label>
     <span>{{ block.label }}</span>
-    <select class="mx-2 border rounded px-20 py-1" v-model="props.state[block.key]">
-        <Option v-for="item in block.options" :value="item" :key="item">{{ item }}</Option>
+    <select class="mx-2 border rounded px-2 py-1 text-left" v-model="props.state[block.key]">
+      <option v-for="item in block.options">{{ item }}</option>
     </select>
   </label>
   <p class="text-xs text-gray-500">{{ block.hint }}</p>

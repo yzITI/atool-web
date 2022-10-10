@@ -25,7 +25,7 @@ const blocks = {
     name: 'Select',
     block: () => import('./Select.vue'),
     panel: () => import('./SelectPanel.vue'),
-    template: { key:"select", label: 'label', options: [] }
+    template: { key: 'select', label: 'label', options: [], hint: '' }
   } 
 }
 
