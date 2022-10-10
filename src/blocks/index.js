@@ -20,14 +20,13 @@ const blocks = {
     block: () => import('./Textarea.vue'),
     panel: () => import('./TextareaPanel.vue'),
     template: { key: 'textarea', label: 'label', rows: 5, placeholder: 'placeholder', hint: '' }
-  }
-  /*
+  },
   select: {
-    name: 'Selector',
+    name: 'Select',
     block: () => import('./Select.vue'),
-    // panel: () => import('./SelectPanel.vue'),
-    template: { title: 'title', options: ['Option 1', 'Option 2'] }
-  } */
+    panel: () => import('./SelectPanel.vue'),
+    template: { key:"select", label: 'label', options: [] }
+  } 
 }
 
 for (const k in blocks) {
