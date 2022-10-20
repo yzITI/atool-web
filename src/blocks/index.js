@@ -3,6 +3,12 @@ import loadingComponent from './Loading.vue'
 import errorComponent from './Error.vue'
 
 const blocks = {
+  code: {
+    name: 'Code',
+    block: () => import('./Code.vue'),
+    panel: () => import('./CodePanel.vue'),
+    template: { code: 'const S = ctx.state\nS.hi = \'hello!\'', editable: true, visible: true }
+  },
   html: {
     name: 'HTML',
     block: () => import('./HTML.vue'),

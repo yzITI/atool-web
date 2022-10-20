@@ -1,6 +1,7 @@
 <script setup>
 import { UserCircleIcon, CubeIcon, CodeBracketSquareIcon } from '@heroicons/vue/24/outline'
 import Wrapper from './Wrapper.vue'
+import { I } from '../utils/string.js'
 import state from '../state'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -21,7 +22,7 @@ function signin () {
 <template>
   <Transition name="fade" mode="out-in">
     <UserCircleIcon v-if="state.user" @click="showPanel = true" class="w-8 text-gray-700 cursor-pointer" />
-    <button v-else @click="signin" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 font-bold text-white">Sign in</button>
+    <button v-else @click="signin" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 font-bold text-white">{{ I('[[Sign in|登录]]') }}</button>
   </Transition>
   <Transition name="fade">
     <div v-if="showPanel" @click="showPanel = false" class="fixed w-full h-screen bg-transparant z-50 top-0 left-0" />
@@ -35,7 +36,7 @@ function signin () {
         <CubeIcon class="w-6 mr-2" />My Services
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
-        <p class="cursor-pointer" @click="goto('/about')">About</p>
+        <p class="cursor-pointer" @click="goto('/about')">{{ I('[[About|关于]]') }}</p>
         <p>&copy; yzITI 2022</p>
       </div>
     </Wrapper>

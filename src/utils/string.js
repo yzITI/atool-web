@@ -1,3 +1,5 @@
+import state from '../state.js'
+
 export function T (template, data) {
   let res = template
   const regexp = /{{(((?!{{).)*?)}}/g
@@ -8,16 +10,7 @@ export function T (template, data) {
   return res
 }
 
-const LS = window.localStorage
-let locale = LS.locale || 0
-
-export function setLocale (l) {
-  LS.locale = l
-  window.location.reload()
-}
-if (!LS.locale) setLocale(navigator.language.indexOf('zh') === 0 ? 1 : 0)
-
-export function I (template, choice = locale) {
+export function I (template, choice = state.locale) {
   let res = template
   const regexp = /\[\[(((?!\[\[).)*?)\]\]/g
   while (regexp.test(res)) {
