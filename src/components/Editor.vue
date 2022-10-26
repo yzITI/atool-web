@@ -36,6 +36,10 @@ onMounted(() => {
 onUnmounted(() => {
   if (editor) editor.dispose()
 })
+
+if (!window.onresize) window.onresize = () => {
+  monaco.editor.getEditors().forEach(e => e.layout())
+}
 </script>
 
 <template>

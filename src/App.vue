@@ -7,7 +7,7 @@ import state from './state.js'
 <template>
   <div class="w-full min-h-screen bg-gray-100">
     <Bar></Bar>
-    <div style="height: calc(100vh - 3rem);">
+    <div style="height: calc(100vh - 3rem); overflow: auto;">
       <RouterView></RouterView>
     </div>
   </div>

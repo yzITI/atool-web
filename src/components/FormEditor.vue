@@ -32,7 +32,7 @@ function create (b, _) {
 
 <template>
   <div ref="el">
-    <div v-for="(b, i) in props.form" class="py-2 px-4 border-t border-gray-200 relative group" :key="b">
+    <div v-for="(b, i) in props.form" class="p-2 border-t border-gray-200 relative group shrink-0" :key="b">
       <Component :is="blocks[b._]?.block" :i="i" :form="props.form" :state="props.state" />
       <div class="absolute right-1 top-2 flex items-center all-transition opacity-0 group-hover:opacity-100" :class="editing === i && 'opacity-100'">
         <PencilSquareIcon class="w-4 mx-2 cursor-pointer" :class="editing === i ? 'text-blue-500' : 'text-gray-500'" @click="edit(i)" />

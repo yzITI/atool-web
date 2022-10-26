@@ -23,3 +23,5 @@ export function I (template, choice = state.locale) {
 export function IT (template, data, choice = locale) {
   return I(T(template, data), choice)
 }
+
+export const random = () => Math.random().toString(36).substr(2, 10) + Math.random().toString(36).substr(2, 10)
