@@ -2,6 +2,7 @@
 import { watch } from 'vue'
 import state from '../state.js'
 import { I, random } from '../utils/string.js'
+import Toggle from '../components/Toggle.vue'
 import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
@@ -11,6 +12,7 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
 const nid = route.params.id
+let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.nodes[nid]?.role === 'owner')
 
 init()
 
@@ -37,25 +39,47 @@ let editingType = $computed(() => {
 async function init () {
   state.loading = true
   const res = await srpc.node.get(state.user?.token || '', nid)
+  if (!res) {
+    await Swal.fire(I('[[Error|错误]]'), I('[[Form not found or permission denied|表单未找到或权限不足]]'), 'error')
+    return router.push('/')
+  }
   state.loading = false
-  if (!res) return Swal.fire('Error', '', 'error')
   info = { title: res.title, description: res.description, time: res.time }
+  form = []
+  for (let i = 0; ; i++) {
+    if (!res[i]) break
+    form.push(JSON.parse(res[i]))
+  }
 }
 
-let showPanel = $ref(true)
+let showPanel = $ref(false)
+
+async function submit () {
+  if (!state.user?.token) return
+  const data = { title: info.title, description: info.description, public: info.public, type: 'form' }
+  for (let i = 0; i < form.length; i++) {
+    data[i] = JSON.stringify(form[i])
+  }
+  state.loading = true
+  const res = await srpc.node.put(state.user.token, nid, data)
+  state.loading = false
+  if (res) Swal.fire(I('[[Success|保存成功]]'), '', 'success')
+  else Swal.fire(I('[[Error|错误]]'), I('[[Fail to save|保存失败]]'), 'error')
+}
 </script>
 
 <template>
-  <div class="w-full h-full flex items-start">
+  <div class="w-full h-full flex items-start" v-if="info.time">
     <div class="p-4 h-full overflow-y-auto grow">
-      <div class="p-4 bg-white rounded border">
-        <h3 class="font-bold text-lg flex items-center justify-between">
-          <span>{{ I(info.title) }}</span>
+      <div class="p-4 bg-white rounded border relative">
+        <h3 class="font-bold text-lg flex items-center justify-between my-1">
+          <input v-model="info.title" :readonly="!editable">
           <div class="flex items-center mb-1">
             <button @click="showPanel = true" class="mr-2 lg:hidden"><Bars3Icon class="w-6" /></button>
-            <button @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white">{{ I('[[Save|保存]]') }}</button>
+            <button v-if="editable" @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white">{{ I('[[Save|保存]]') }}</button>
           </div>
         </h3>
+        <p v-if="editable" style="font-size: 0.6rem;" class="text-gray-300 absolute right-2 top-1">{{ I('[[Last saved at|最后保存于]]: ') }}{{ timeStr }}</p>
         <FormEditor :form="form" :state="ctx.state" @edit="i => { editing = i; showPanel = true }" />
       </div>
     </div>
@@ -63,22 +87,6 @@ let showPanel = $ref(true)
       <div v-if="showPanel" class="fixed z-40 w-screen h-screen top-0 left-0 bg-black opacity-40 lg:hidden" @click="showPanel = false" />
     </Transition>
     <div class="all-transition shrink-0 side lg:w-96 xl:w-1/3 lg:h-full overflow-y-auto" :class="showPanel && 'show-side'">
-      <div class="p-3 m-2 bg-white shadow rounded">
-        <h3 class="text-lg font-bold">{{ I('[[Edit Form Info.|编辑表单信息]]') }}</h3>
-        <hr>
-        <label class="block my-2">
-          <span class="font-bold block">{{ I('[[Title|标题]]') }}</span>
-          <input class="border rounded px-2 py-1 w-full" type="text" :placeholder="I('[[Form title|表单标题]]')" v-model="info.title">
-        </label>
-        <label class="block my-2 text-gray-700">
-          <span class="font-bold block">{{ I('[[Description|描述]]') }}</span>
-          <textarea class="block w-full border rounded px-2 py-1 text-sm" rows="2" v-model="info.description" :placeholder="I('[[Form description|表单表述]]')" />
-        </label>
-        <div class="flex items-center">
-          <button @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white font-bold">{{ I('[[Save|保存]]') }}</button>
-          <p class="text-xs text-gray-500 ml-2">{{ I('[[Last saved at|最后保存于]]: ') }}{{ timeStr }}</p>
-        </div>
-      </div>
       <div class="p-3 m-2 bg-white shadow rounded" v-if="editingType">
         <h3 class="text-lg font-bold">{{ I('[[Edit Form Block|编辑表单组件]]') }}</h3>
         <p class="text-xs text-gray-500 mb-2">{{ I('[[Block type|组件类型]]:') }} <code>{{ editingType }}</code></p>
@@ -88,6 +96,16 @@ let showPanel = $ref(true)
         <h3 class="text-lg font-bold">{{ I('[[Realtime State|实时状态]]') }}</h3>
         <Editor class="h-40 my-2" language="json" v-model="ctx.json" />
         <button @click="updateState" class="bg-yellow-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">{{ I('[[Update State|更新状态]]') }}</button>
+      </div>
+      <div class="p-3 m-2 bg-white shadow rounded" v-if="state.nodes[nid]?.role === 'owner'">
+        <h3 class="text-lg font-bold">{{ I('[[Permission|权限管理]]') }}</h3>
+        <hr>
+        <label class="block my-2 flex items-center">
+          <span class="font-bold mr-2">{{ I('[[Public|公开]]') }}</span>
+          <Toggle v-model="info.public" />
+          <p class="text-xs text-gray-500">{{ I('[[accessible by link|可通过链接访问]]') }}</p>
+        </label>
+        <button @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white font-bold">{{ I('[[Save|保存]]') }}</button>
       </div>
     </div>
   </div>

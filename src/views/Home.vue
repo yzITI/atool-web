@@ -11,19 +11,16 @@ else init()
 
 const random = () => Math.random().toString(36).substr(2, 10) + Math.random().toString(36).substr(2, 10)
 
-let nodes = $ref({})
-
 async function init () {
   state.loading = true
   const res = await srpc.node.getAll(state.user.token)
   state.loading = false
   if (!res) return Swal.fire('Error', '', 'error')
-  nodes = {}
+  state.nodes = {}
   for (const k in res) {
     res[k].data = JSON.parse(res[k].data)
-    nodes[res[k].node] = res[k]
+    state.nodes[res[k].node] = res[k]
   }
-  console.log(nodes)
 }
 
 async function create () {
@@ -38,7 +35,7 @@ async function create () {
 async function del (id) {
   const { isConfirmed } = await Swal.fire({
     title: I('[[Dangerous Operation|危险操作]]'),
-    html: I(`[[You are deleting node|您正在删除实例]]<br>${nodes[id].data.title}(<code>${id}</code>)<br><b>[[All data and permissions will be deleted|所有相关数据和权限都将被删除]]</b>`),
+    html: I(`[[You are deleting node|您正在删除实例]]<br>${state.nodes[id].data.title}(<code>${id}</code>)<br><b>[[All data and permissions will be deleted|所有相关数据和权限都将被删除]]</b>`),
     showCancelButton: true,
     confirmButtonColor: 'red',
     icon: 'warning'
@@ -48,7 +45,7 @@ async function del (id) {
   const res = await srpc.node.del(state.user.token, id)
   state.loading = false
   if (!res) return Swal.fire('Error', '', 'error')
-  delete nodes[id]
+  delete state.nodes[id]
 }
 </script>
 
@@ -58,14 +55,14 @@ async function del (id) {
       <HomeIcon class="w-10 mr-2" />
       {{ I('[[My nodes|我的实例]]') }}
     </h2>
-    <p v-if="!Object.keys(nodes).length" class="text-gray-500">{{ I('[[You don\'t have any service now.|您还没有实例，创建一个吧？]]') }}</p>
-    <div v-for="n in nodes" class="all-transition border hover:shadow bg-white rounded my-2 p-2 text-gray-700 cursor-pointer" @click="router.push('/form/' + n.node)">
+    <p v-if="!Object.keys(state.nodes).length" class="text-gray-500">{{ I('[[You don\'t have any service now.|您还没有实例，创建一个吧？]]') }}</p>
+    <div v-for="n in state.nodes" class="all-transition border hover:shadow bg-white rounded my-2 p-2 text-gray-700 cursor-pointer" @click="router.push('/form/' + n.node)">
       <div class="flex items-center justify-between">
         <h3 class="flex items-center font-bold text-lg">
           <CubeIcon class="w-8 mx-2" style="min-width: 2rem;" />
           {{ n.data.title }}
         </h3>
-        <TrashIcon class="w-5 mx-1 text-red-500 cursor-pointer" @click.stop="del(n.node)" />
+        <TrashIcon v-if="n.role === 'owner'" class="w-5 mx-1 text-red-500 cursor-pointer" @click.stop="del(n.node)" />
       </div>
     </div>
   </div>

@@ -9,7 +9,12 @@ if (typeof LS.locale === 'undefined') LS.locale = navigator.language.indexOf('zh
 export const state = reactive({
   locale: Number(LS.locale || 0),
   loading: false,
-  user: SS.user ? JSON.parse(SS.user) : null
+  user: SS.user ? JSON.parse(SS.user) : null,
+  nodes: JSON.parse(SS.nodes || '{}')
 })
+
+watch(() => state.nodes, v => {
+  SS.nodes = JSON.stringify(v)
+}, { deep: true })
 
 export default state
