@@ -7,8 +7,10 @@ import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
 import FormEditor from '../components/FormEditor.vue'
 import { DocumentTextIcon, Bars3Icon } from '@heroicons/vue/24/outline'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter(), route = useRoute()
+
+const nid = route.params.id
 
 init()
 
@@ -34,7 +36,10 @@ let editingType = $computed(() => {
 
 async function init () {
   state.loading = true
+  const res = await srpc.node.get(state.user?.token || '', nid)
   state.loading = false
+  if (!res) return Swal.fire('Error', '', 'error')
+  info = { title: res.title, description: res.description, time: res.time }
 }
 
 let showPanel = $ref(true)
