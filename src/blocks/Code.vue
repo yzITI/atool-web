@@ -36,5 +36,5 @@ async function exec () {
     <span class="ml-2 text-gray-500 text-xs">{{ I('[[Code will run on your device|代码将在您的设备上执行]]') }}</span>
   </div>
   <pre v-if="error" class="bg-red-50 text-red-500 px-2 py-1 text-xs my-2">{{ error }}</pre>
-  <Editor v-if="block.visible" :read-only="!block.editable" class="h-56 my-2" v-model="block.code" />
+  <Editor v-if="block.visible" :read-only="!block.editable" class="my-2" :style="{ height: block.height }" v-model="block.code" />
 </template>

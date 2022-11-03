@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const index = {
-  '/': () => import('./views/Home.vue'),
+  '/': () => import('./views/Cover.vue'),
   '/form/:id': () => import('./views/Form.vue'),
   '/run/:id': () => import('./views/Run.vue'),
   '/login': () => import('./views/Login.vue'),
