@@ -36,6 +36,13 @@ let editingType = $computed(() => {
   return b?._
 })
 
+function refreshLink () {
+  if (state.user && state.nodes[nid] && state.nodes[nid].title !== info.title) {
+    srpc.node.refreshLink(state.user.token, nid)
+    state.nodes[nid].title = info.title
+  }
+}
+
 async function init () {
   state.loading = true
   const res = await srpc.node.get(state.user?.token || '', nid)
@@ -44,27 +51,29 @@ async function init () {
     return router.push('/')
   }
   state.loading = false
-  info = { title: res.title, description: res.description, time: res.time }
+  info = { title: res.title, time: res.time, public: res.public }
   form = []
   for (let i = 0; ; i++) {
     if (!res[i]) break
     form.push(JSON.parse(res[i]))
   }
+  refreshLink()
 }
 
 let showPanel = $ref(false)
 
 async function submit () {
   if (!state.user?.token) return
-  const data = { title: info.title, description: info.description, public: info.public, type: 'form' }
+  const data = { title: info.title, public: info.public, type: 'form' }
   for (let i = 0; i < form.length; i++) {
     data[i] = JSON.stringify(form[i])
   }
   state.loading = true
   const res = await srpc.node.put(state.user.token, nid, data)
   state.loading = false
-  if (res) Swal.fire(I('[[Success|保存成功]]'), '', 'success')
-  else Swal.fire(I('[[Error|错误]]'), I('[[Fail to save|保存失败]]'), 'error')
+  if (!res) return Swal.fire(I('[[Error|错误]]'), I('[[Fail to save|保存失败]]'), 'error')
+  refreshLink()
+  Swal.fire(I('[[Success|保存成功]]'), '', 'success')
 }
 </script>
 

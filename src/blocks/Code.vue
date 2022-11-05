@@ -29,7 +29,7 @@ async function exec () {
 
 <template>
   <div class="flex items-center">
-    <button class="all-transition shadow hover:shadow-md rounded px-2 py-1.5 font-bold text-white bg-yellow-500 text-sm flex items-center" @click="exec">
+    <button class="all-transition border border-orange-500 bg-orange-100 text-orange-500 hover:text-white hover:bg-orange-500 rounded px-2 py-1.5 font-bold text-sm flex items-center" @click="exec">
       <PlayIcon class="w-5 mr-1" />
       {{ running ? I('[[Running|正在执行]]') : I('[[Execute|执行代码]]') }}
     </button>
