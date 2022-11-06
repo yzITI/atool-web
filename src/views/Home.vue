@@ -83,7 +83,7 @@ async function del (id) {
     </div>
     <div class="grow bg-white z-10 relative p-4 overflow-y-auto">
       <p v-if="!catalog[on].length" class="text-gray-500 text-sm">{{ I('[[You don\'t have any node now.|您还没有实例，创建一个吧？]]') }}</p>
-      <div v-for="n in catalog[on]" class="all-transition first:border-t border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 cursor-pointer" @click="router.push('/form/' + n.node)">
+      <div v-for="n in catalog[on]" class="all-transition first:border-t border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 cursor-pointer" @click="router.push(`/${n.data.type}/${n.node}`)">
         <div class="flex items-center justify-between">
           <h3>{{ n.data.title }}</h3>
           <TrashIcon v-if="n.role === 'owner'" class="w-5 mx-1 text-red-500 cursor-pointer shrink-0" @click.stop="del(n.node)" />

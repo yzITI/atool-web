@@ -1,13 +1,13 @@
 <script setup>
 import { watch } from 'vue'
 import state from '../state.js'
-import { I, random } from '../utils/string.js'
+import { I } from '../utils/string.js'
 import Toggle from '../components/Toggle.vue'
 import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
 import FormEditor from '../components/FormEditor.vue'
-import { DocumentTextIcon, Bars3Icon } from '@heroicons/vue/24/outline'
+import { Bars3Icon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 

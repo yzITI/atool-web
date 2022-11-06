@@ -13,6 +13,8 @@ function changeLocale () {
 
 let page = $computed(() => {
   if (route.path.indexOf('/form/') === 0) return I('[[Form|表单]]')
+  if (route.path.indexOf('/data/') === 0) return I('[[Data|数据]]')
+  if (route.path.indexOf('/service/') === 0) return I('[[service|服务]]')
   return ''
 })
 </script>
