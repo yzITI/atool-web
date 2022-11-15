@@ -41,6 +41,9 @@ async function init () {
     if (res[f]) codes[f] = res[f]
   }
   refreshLink()
+  // test data
+  form.push('NODE')
+  codes['NODE'] = 'let a = 0'
 }
 
 async function submit () {
@@ -59,16 +62,15 @@ async function submit () {
 
 let showPanel = $ref(true)
 
-let forms = $ref(['haha', 'test', 'longlonglonglonglonglonglonglong'])
-let showCode = $ref(false)
+let coding = $ref(-1), code = $ref('')
 </script>
 
 <template>
   <Transition name="fade">
-    <div class="fixed top-0 left-0 w-screen h-screen bg-black opacity-50" v-if="showCode" @click="showCode = false" />
+    <div class="fixed top-0 left-0 w-screen h-screen bg-black opacity-50" v-if="coding != -1" @click="codes[form[coding]] = code; coding = -1" />
   </Transition>
-  <div class="all-transition fixed w-11/12 md:w-2/3 bg-white h-screen" :class="showCode ? 'right-0' : '-right-full'">
-    
+  <div class="all-transition fixed w-11/12 md:w-2/3 bg-white h-screen" :class="coding != -1 ? 'right-0' : '-right-full'">
+    <Editor v-model="code" class="h-96" />
   </div>
   <div class="w-full min-h-full p-4" v-if="info.time">
     <h3 class="font-bold flex items-center justify-between my-1">
@@ -77,9 +79,10 @@ let showCode = $ref(false)
     </h3>
     <div class="md:flex w-full">
       <div class="p-3 m-2 bg-white shadow rounded w-full md:w-2/3">
-        <div v-for="f in forms" class="all-transition first:border-t border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex">
-          <div>{{ f }}</div>
+        <div v-for="i in form.length" class="all-transition first:border-t border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex">
+          <div>{{ form[i - 1] }}</div>
           <div class="grow"></div>
+          <CodeBracketIcon class="w-4 mx-2 cursor-pointer text-green-500" @click="coding = i - 1; code = codes[form[coding]]" />
           <ArrowUpTrayIcon class="w-4 mx-2 cursor-pointer text-red-500" />
         </div>
         <button class="flex items-center px-3 py-1 bg-blue-500 rounded text-white font-bold my-2">
@@ -88,10 +91,6 @@ let showCode = $ref(false)
         </button>
       </div>
       <div class="w-full md:w-1/3">
-        <div class="p-3 m-2 bg-white shadow rounded flex items-center justify-center hover:bg-gray-200 font-mono text-gray-500 cursor-pointer" @click="showCode = true">
-          <CodeBracketIcon class="w-6 mx-2" />
-          {{ I('[[Show Code|查看代码]]') }}
-        </div>
         <div class="p-3 m-2 bg-white shadow rounded">
           something else
         </div>
