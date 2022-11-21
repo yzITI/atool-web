@@ -61,7 +61,7 @@ async function init () {
 
 async function submit () {
   if (!state.user?.token) return
-  const data = { title: info.title, public: info.public, type: 'service', form: JSON.stringify(forms) }
+  const data = { title: info.title, public: info.public, type: 'service', forms: JSON.stringify(forms) }
   for (const f in forms) {
     if (codes[f]) data[f] = codes[f]
   }
