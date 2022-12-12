@@ -4,8 +4,8 @@ const index = {
   '/': () => import('./views/Cover.vue'),
   '/login': () => import('./views/Login.vue'),
   '/home': () => import('./views/Home.vue'),
-  '/form/:id': () => import('./views/Form.vue'),
-  '/service/:id': () => import('./views/Service.vue'),
+  '/F/:id': () => import('./views/Form.vue'),
+  '/S/:id': () => import('./views/Service.vue'),
   '/run/:id': () => import('./views/Run.vue')
 }
 

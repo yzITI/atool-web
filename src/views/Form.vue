@@ -37,9 +37,7 @@ let editingType = $computed(() => {
 })
 
 function refreshLink () {
-  if (state.user && state.nodes[nid] && state.nodes[nid].title !== info.title) {
-    srpc.node.refreshLink(state.user.token, nid)
-    state.nodes[nid].title = info.title
+  if (state.user && state.nodes[nid] && state.nodes[nid].title !== info.title) state.nodes[nid].title = info.title
   }
 }
 
