@@ -57,7 +57,7 @@ async function del (id) {
   })
   if (!isConfirmed) return
   state.loading = true
-  const res = await srpc[id[id.length - 1]].del(state.user.token, id)
+  const res = await srpc.U.delNode(state.user.token, id)
   state.loading = false
   if (!res) return Swal.fire('Error', '', 'error')
   delete state.nodes[id]
