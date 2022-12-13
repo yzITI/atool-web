@@ -37,19 +37,18 @@ let editingType = $computed(() => {
 })
 
 function refreshLink () {
-  if (state.user && state.nodes[nid] && state.nodes[nid].title !== info.title) state.nodes[nid].title = info.title
-  }
+  if (state.user && state.nodes[nid] && state.nodes[nid].name !== info.name) state.nodes[nid].name = info.name
 }
 
 async function init () {
   state.loading = true
-  const res = await srpc.node.get(state.user?.token || '', nid)
+  const res = await srpc.F.get(state.user?.token || '', nid)
   if (!res) {
     await Swal.fire(I('[[Error|错误]]'), I('[[Form not found or permission denied|表单未找到或权限不足]]'), 'error')
     return router.push('/')
   }
   state.loading = false
-  info = { title: res.title, time: res.time, public: res.public }
+  info = { name: res.name, time: res.time, public: res.public }
   form = []
   for (let i = 0; ; i++) {
     if (!res[i]) break
@@ -62,12 +61,12 @@ let showPanel = $ref(false)
 
 async function submit () {
   if (!state.user?.token) return
-  const data = { title: info.title, public: info.public, type: 'form' }
+  const data = { name: info.name, public: info.public, type: 'form' }
   for (let i = 0; i < form.length; i++) {
     data[i] = JSON.stringify(form[i])
   }
   state.loading = true
-  const res = await srpc.node.put(state.user.token, nid, data)
+  const res = await srpc.F.put(state.user.token, nid, data)
   state.loading = false
   if (!res) return Swal.fire(I('[[Error|错误]]'), I('[[Fail to save|保存失败]]'), 'error')
   refreshLink()
@@ -80,7 +79,7 @@ async function submit () {
     <div class="p-4 h-full overflow-y-auto grow">
       <div class="p-4 bg-white rounded border relative">
         <h3 class="font-bold text-lg flex items-center justify-between my-1">
-          <input v-model="info.title" :readonly="!editable">
+          <input v-model="info.name" :readonly="!editable">
           <div class="flex items-center mb-1">
             <button @click="showPanel = true" class="mr-2 lg:hidden"><Bars3Icon class="w-6" /></button>
             <button v-if="editable" @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white">{{ I('[[Save|保存]]') }}</button>
