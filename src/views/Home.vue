@@ -75,8 +75,8 @@ async function del (id) {
       <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'F' && 'bg-blue-500 text-white'" @click="on = 'F'"><SquaresPlusIcon class="w-5 mr-1" /> {{ I('[[Form|表单]]') }}</div>
       <!--
       <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'D' && 'bg-blue-500 text-white'" @click="on = 'D'"><CircleStackIcon class="w-5 mr-1" />{{ I('[[Data|数据]]') }}</div>
-      <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'S' && 'bg-blue-500 text-white'" @click="on = 'S'"><CubeIcon class="w-5 mr-1" />{{ I('[[Service|服务]]') }}</div>
       -->
+      <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'S' && 'bg-blue-500 text-white'" @click="on = 'S'"><CubeIcon class="w-5 mr-1" />{{ I('[[Service|服务]]') }}</div>
     </div>
     <div class="grow bg-white z-10 relative p-4 overflow-y-auto">
       <p v-if="!Object.keys(catalog[on]).length" class="text-gray-500 text-sm">{{ I('[[You don\'t have any node now.|您还没有实例，创建一个吧？]]') }}</p>

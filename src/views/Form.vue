@@ -16,13 +16,11 @@ let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.node
 
 init()
 
-let info = $ref({}), form = $ref([]), ctx = $ref({ state: {}, json: '{}' })
+let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({ state: {}, json: '{}' })
 watch(() => ctx.state, v => {
   ctx.json = JSON.stringify(ctx.state, null, 2)
 }, { deep: true })
-function updateState () {
-  ctx.state = JSON.parse(ctx.json)
-}
+function updateState () { ctx.state = JSON.parse(ctx.json) }
 
 let timeStr = $computed(() => {
   if (!info.time) return ''
@@ -36,6 +34,13 @@ let editingType = $computed(() => {
   return b?._
 })
 
+let isPublic = $ref(false)
+
+watch($$(isPublic), async v => {
+  if (v) await srpc.U.putLinkTo(state.user?.token || '', '', nid, { role: 'viewer' })
+  else await srpc.U.delLinkTo(state.user?.token || '', 'U', nid)
+})
+
 function refreshLink () {
   if (state.user && state.nodes[nid] && state.nodes[nid].name !== info.name) state.nodes[nid].name = info.name
 }
@@ -47,9 +52,12 @@ async function init () {
     await Swal.fire(I('[[Error|错误]]'), I('[[Form not found or permission denied|表单未找到或权限不足]]'), 'error')
     return router.push('/')
   }
+  links = await srpc.U.getLinkFrom(state.user?.token || '', nid)
   state.loading = false
-  info = { name: res.name, time: res.time, public: res.public }
+  info = { name: res.name, time: res.time }
   form = []
+  if (links.U) isPublic = true
+  delete links.U
   for (let i = 0; ; i++) {
     if (!res[i]) break
     form.push(JSON.parse(res[i]))
@@ -61,7 +69,7 @@ let showPanel = $ref(false)
 
 async function submit () {
   if (!state.user?.token) return
-  const data = { name: info.name, public: info.public, type: 'form' }
+  const data = { name: info.name, type: 'form' }
   for (let i = 0; i < form.length; i++) {
     data[i] = JSON.stringify(form[i])
   }
@@ -108,10 +116,9 @@ async function submit () {
         <hr>
         <label class="block my-2 flex items-center">
           <span class="font-bold mr-2">{{ I('[[Public|公开]]') }}</span>
-          <Toggle v-model="info.public" />
+          <Toggle v-model="isPublic" />
           <p class="text-xs text-gray-500">{{ I('[[accessible by link|可通过链接访问]]') }}</p>
         </label>
-        <button @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white font-bold">{{ I('[[Save|保存]]') }}</button>
       </div>
     </div>
   </div>
