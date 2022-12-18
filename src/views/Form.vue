@@ -14,6 +14,7 @@ const router = useRouter(), route = useRoute()
 const nid = route.params.id
 let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.nodes[nid]?.role === 'owner')
 
+state.loading = true
 init()
 
 let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({ state: {}, json: '{}' })

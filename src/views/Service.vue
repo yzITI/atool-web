@@ -5,14 +5,17 @@ import { I } from '../utils/string.js'
 import Toggle from '../components/Toggle.vue'
 import srpc from '../utils/srpc.js'
 import Editor from '../components/Editor.vue'
-import { DocumentTextIcon, Bars3Icon, PencilSquareIcon, XMarkIcon, PlusIcon, CodeBracketIcon, CheckIcon } from '@heroicons/vue/24/outline'
+import NodeSelector from '../components/NodeSelector.vue'
+import { DocumentTextIcon, Bars3Icon, PencilSquareIcon, XMarkIcon, PlusIcon, CodeBracketIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
 const nid = route.params.id
 let isAdmin = $computed(() => state.nodes[nid]?.role === 'owner')
 
-init()
+state.loading = true
+if (!state.user) router.push('/')
+else init()
 
 let info = $ref({}), links = $ref({}), coding = $ref(false), keyword = $ref(''), queryInput = $ref('')
 
@@ -55,40 +58,53 @@ async function submit () {
   const data = { name: info.name }
   for (const f in info.forms) data[f] = JSON.stringify(info.forms[f])
   state.loading = true
-  const res = await srpc.node.put(state.user.token, nid, data)
+  const res = await srpc.S.put(state.user.token, nid, data)
   state.loading = false
   if (!res) return Swal.fire(I('[[Error|错误]]'), I('[[Fail to save|保存失败]]'), 'error')
   refreshLink()
   Swal.fire(I('[[Success|保存成功]]'), '', 'success')
 }
 
-let showForm = $ref(false)
+let showSelector = $ref(false)
+
+async function addLink (id, name) {
+  const type = showSelector
+  if (info.links[id]) return
+  state.loading = true
+  const res = await srpc.S.putLinkTo(state.user?.token || '', nid, id, { role: 'viewer' })
+  state.loading = false
+  if (!res) return Swal.fire(I('[[Permissio Denied|权限不足]]'), '', 'error')
+  info.links[id] = { name, role: 'viewer' }
+  if (type === 'F') info.forms[id] = {}
+}
+
+async function delLink (id) {
+  const { isConfirmed } = await Swal.fire({
+    title: I('[[Delete Form?|删除表单？]]'),
+    html: I('[[Code will be deleted as well|表单代码也将被删除]]'),
+    icon: 'warning',
+    showCancelButton: true
+  })
+  if (!isConfirmed) return
+  state.loading = true
+  const res = await srpc.S.delLinkTo(state.user?.token || '', nid, id)
+  state.loading = false
+  if (!res) return Swal.fire('Error', '', 'error')
+  delete info.links[id]
+  delete info.forms[id]
+}
 </script>
 
 <template>
   <Transition name="fade">
-    <div class="fixed top-0 left-0 w-screen h-screen bg-black opacity-50" v-if="coding" @click="coding = false" />
+    <div class="fixed z-20 top-0 left-0 w-screen h-screen bg-black opacity-50" v-if="coding" @click="coding = false" />
   </Transition>
-  <div class="all-transition fixed p-2 w-11/12 md:w-2/3 bg-white h-screen" :class="coding ? 'right-0' : '-right-full'">
+  <div class="all-transition fixed z-20 p-2 w-11/12 md:w-2/3 bg-white h-screen" :class="coding ? 'right-0' : '-right-full'">
     <div class="text-sm text-gray-500 mb-2">{{ I('[[Backend Code|后端代码]]') }}</div>
     <Editor v-if="coding" v-model="info.forms[coding].code" class="h-full" />
   </div>
-  <!--
-  <Transition name="fade">
-    <div class="fixed top-0 left-0 w-screen h-screen bg-black opacity-50" v-if="showForm" @click="showForm = false" />
-  </Transition>
-  <div class="all-transition fixed w-11/12 md:w-1/3 bg-white h-screen" :class="showForm ? 'right-0' : '-right-full'">
-    <h4 class="text-lg font-bold text-center my-2">{{ I('[[All forms|所有表单]]') }}</h4>
-    <input class="w-full py-1 px-2 mb-2 text-sm font-mono border" :placeholder="I('[[Search Form ID|搜索表单ID]]')" v-model="keyword">
-    <div v-for="(n, id) in state.nodes">
-      <div v-if="n.data.type === 'form'" class="flex items-center px-1 cursor-pointer all-transition" :class="forms[n.node] ? 'bg-blue-200' : 'bg-gray-100'" @click="choose(n.node)">
-        <CheckIcon v-if="forms[n.node]" class="w-4 text-blue-500" />
-        <PlusIcon v-else class="w-4 text-gray-400" />
-        <div class="mx-1 font-bold">{{ n.name }}</div>
-      </div>
-    </div>
-  </div>
-  -->
+  <NodeSelector v-model="showSelector" @select="addLink" />
+  <!-- main UI -->
   <div class="w-full min-h-full p-4" v-if="info.time">
     <h3 class="font-bold flex items-center justify-between my-1">
       <input class="bg-transparent text-xl" v-model="info.name">
@@ -98,12 +114,12 @@ let showForm = $ref(false)
       <div class="p-3 m-2 bg-white shadow rounded grow">
         <h3 class="text-lg font-bold border-b">{{ I('[[Service Forms|服务表单]]') }}</h3>
         <div v-for="f, id in info.forms" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex">
-          <div>{{ info.links[f].name }}</div>
+          <div>{{ info.links[id].name }}</div>
           <div class="grow"></div>
           <CodeBracketIcon class="w-5 mx-2 rounded cursor-pointer text-green-500" @click="coding = id" />
-          <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delete info.forms[id]"/>
+          <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
         </div>
-        <button class="flex items-center px-3 py-1 bg-blue-500 rounded text-white font-bold my-2" @click="showForm = true">
+        <button class="flex items-center px-3 py-1 bg-blue-500 rounded text-white font-bold my-2" @click="showSelector = 'F'">
           <PlusIcon class="w-6 mr-1"/>
           {{ I('[[Add Form|添加表单]]') }}
         </button>

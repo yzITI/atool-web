@@ -6,6 +6,7 @@ import { PlusIcon, HomeIcon, CubeIcon, SquaresPlusIcon, CircleStackIcon, TrashIc
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
+state.loading = true
 if (!state.user) router.push('/')
 else init()
 
@@ -66,7 +67,7 @@ async function del (id) {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="w-full h-full flex flex-col" v-if="!state.loading">
     <h2 class="text-2xl font-bold m-4 flex items-center">
       <HomeIcon class="w-10 mr-2" />
       {{ I('[[My nodes|我的实例]]') }}
@@ -82,7 +83,10 @@ async function del (id) {
       <p v-if="!Object.keys(catalog[on]).length" class="text-gray-500 text-sm">{{ I('[[You don\'t have any node now.|您还没有实例，创建一个吧？]]') }}</p>
       <div v-for="(n, id) in catalog[on]" class="all-transition first:border-t border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 cursor-pointer" @click="router.push(`/${id[id.length - 1]}/${id}`)">
         <div class="flex items-center justify-between">
-          <h3>{{ n.name }}</h3>
+          <div class="flex items-center flex-wrap">
+            <h3>{{ n.name }}</h3>
+            <code class="ml-1 px-1 text-gray-400 bg-gray-100" style="font-size: 0.65rem;">{{ id }}</code>
+          </div>
           <TrashIcon v-if="n.role === 'owner'" class="w-5 mx-1 text-red-500 cursor-pointer shrink-0" @click.stop="del(id)" />
         </div>
       </div>
