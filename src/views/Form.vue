@@ -70,7 +70,7 @@ let showPanel = $ref(false)
 
 async function submit () {
   if (!state.user?.token) return
-  const data = { name: info.name, type: 'form' }
+  const data = { name: info.name }
   for (let i = 0; i < form.length; i++) {
     data[i] = JSON.stringify(form[i])
   }

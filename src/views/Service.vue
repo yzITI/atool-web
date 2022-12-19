@@ -6,7 +6,7 @@ import Toggle from '../components/Toggle.vue'
 import srpc from '../utils/srpc.js'
 import Editor from '../components/Editor.vue'
 import NodeSelector from '../components/NodeSelector.vue'
-import { DocumentTextIcon, Bars3Icon, PencilSquareIcon, XMarkIcon, PlusIcon, CodeBracketIcon } from '@heroicons/vue/24/outline'
+import { DocumentTextIcon, Bars3Icon, PencilSquareIcon, XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
@@ -44,7 +44,7 @@ async function init () {
   }
   links = await srpc.U.getLinkFrom(state.user?.token || '', nid)
   state.loading = false
-  info = { name: res.name, time: res.time, links: res.links, forms: {} }
+  info = { name: res.name, time: res.time, entry: res.entry, links: res.links, forms: {} }
   if (links.U) isPublic = true
   delete links.U
   for (const k in info.links) {
@@ -56,6 +56,7 @@ async function init () {
 async function submit () {
   if (!state.user?.token) return
   const data = { name: info.name }
+  if (info.entry) data.entry = info.entry
   for (const f in info.forms) data[f] = JSON.stringify(info.forms[f])
   state.loading = true
   const res = await srpc.S.put(state.user.token, nid, data)
@@ -92,6 +93,14 @@ async function delLink (id) {
   if (!res) return Swal.fire('Error', '', 'error')
   delete info.links[id]
   delete info.forms[id]
+  if (info.entry === id) delete info.entry
+}
+
+let simple = $ref(false)
+async function copyURL () {
+  const url = window.location.origin + '/#/run/' + nid + (simple ? '?simple=1' : '')
+  await navigator.clipboard.writeText(url)
+  Swal.fire(I('[[Link Copied|链接已复制]]'), '', 'success')
 }
 </script>
 
@@ -110,21 +119,38 @@ async function delLink (id) {
       <input class="bg-transparent text-xl" v-model="info.name">
       <button @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white">{{ I('[[Save|保存]]') }}</button>
     </h3>
-    <div class="flex flex-col md:flex-row w-full">
+    <div class="flex flex-col md:flex-row w-full md:items-start">
       <div class="p-3 m-2 bg-white shadow rounded grow">
-        <h3 class="text-lg font-bold border-b">{{ I('[[Service Forms|服务表单]]') }}</h3>
+        <h3 class="text-lg font-bold border-b flex items-center">
+          <SquaresPlusIcon class="w-6 mr-1" />
+          {{ I('[[Service Forms|服务表单]]') }}
+        </h3>
         <div v-for="f, id in info.forms" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex">
           <div>{{ info.links[id].name }}</div>
           <div class="grow"></div>
-          <CodeBracketIcon class="w-5 mx-2 rounded cursor-pointer text-green-500" @click="coding = id" />
+          <CodeBracketIcon class="w-5 mx-2 rounded cursor-pointer" :class="info.forms[id].code ? 'text-green-500' : 'text-gray-500'" @click="coding = id" />
           <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
         </div>
-        <button class="flex items-center px-3 py-1 bg-blue-500 rounded text-white font-bold my-2" @click="showSelector = 'F'">
+        <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'F'">
           <PlusIcon class="w-6 mr-1"/>
           {{ I('[[Add Form|添加表单]]') }}
         </button>
       </div>
       <div class="md:w-96 xl:w-1/3">
+        <div class="p-3 m-2 bg-white shadow rounded">
+          <h3 class="text-lg font-bold">{{ I('[[Information|服务信息]]') }}</h3>
+          <hr>
+          <div class="flex items-center py-2 px-1 flex-wrap">
+            <button class="px-3 py-2 rounded shadow all-transition hover:shadow-md bg-blue-500 text-white font-bold text-sm" @click="copyURL">{{ I('[[Copy viewer\'s link|复制访问者链接]]') }}</button>
+            <Toggle v-model="simple" class="scale-75">{{ I('[[Simple View|简明视图]]') }}</Toggle>
+          </div>
+          <label class="block my-2">
+            <span class="font-bold block">{{ I('[[Entry Form|入口表单]]') }}</span>
+            <select class="border rounded px-2 py-1 w-full" v-model="info.entry">
+              <option v-for="(f, id) in info.forms" :value="id">{{ info.links[id].name }}</option>
+            </select>
+          </label>
+        </div>
         <div class="p-3 m-2 bg-white shadow rounded" v-if="state.nodes[nid]?.role === 'owner'">
           <h3 class="text-lg font-bold">{{ I('[[Permission|权限管理]]') }}</h3>
           <hr>
