@@ -18,10 +18,11 @@ let keyword = $ref(''), searchResult = $ref(null), searchTip = $ref('')
 async function search () {
   if (keyword[keyword.length - 1] !== show && show !== 'U') return searchTip = I('[[Invalid ID|ID不正确]]')
   searchTip = 'Loading...'
-  const res = await srpc.U.query(state.user?.token || '', [keyword])
+  const id = keyword + (show === 'U' ? 'U' : '')
+  const res = await srpc.U.query(state.user?.token || '', [id])
   searchTip = I('[[Not found|未找到]]')
-  if (res && res[keyword]) {
-    searchResult = { id: keyword, name: res[keyword] }
+  if (res && res[id]) {
+    searchResult = { id: keyword, name: res[id] }
     searchTip = ''
   }
 }
@@ -53,6 +54,7 @@ function select (nid, name) {
       <hr>
       <div v-for="(name, id) in list" class="p-1 cursor-pointer all-transition flex items-center border-b border-gray-200 hover:bg-gray-100" @click="select(id, name)">
         <SquaresPlusIcon v-if="show === 'F'" class="w-6 mr-2" />
+        <UserIcon v-if="show === 'U'" class="w-6 mr-2" />
         <div class="flex flex-col items-start">
           {{ name }}
           <code class="text-gray-400 -mt-0.5 px-1 bg-gray-100" style="font-size: 0.6rem;">{{ id }}</code>

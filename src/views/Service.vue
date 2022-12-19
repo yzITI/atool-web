@@ -1,9 +1,9 @@
 <script setup>
-import { watch } from 'vue'
 import state from '../state.js'
 import { I } from '../utils/string.js'
-import Toggle from '../components/Toggle.vue'
+import Permission from '../components/Permission.vue'
 import srpc from '../utils/srpc.js'
+import Toggle from '../components/Toggle.vue'
 import Editor from '../components/Editor.vue'
 import NodeSelector from '../components/NodeSelector.vue'
 import { DocumentTextIcon, Bars3Icon, PencilSquareIcon, XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
@@ -28,13 +28,6 @@ function refreshLink () {
   if (state.user && state.nodes[nid] && state.nodes[nid].name !== info.name) state.nodes[nid].name = info.name
 }
 
-let isPublic = $ref(false)
-
-watch($$(isPublic), async v => {
-  if (v) await srpc.U.putLinkTo(state.user?.token || '', '', nid, { role: 'viewer' })
-  else await srpc.U.delLinkTo(state.user?.token || '', 'U', nid)
-})
-
 async function init () {
   state.loading = true
   const res = await srpc.S.get(state.user?.token || '', nid)
@@ -45,8 +38,6 @@ async function init () {
   links = await srpc.U.getLinkFrom(state.user?.token || '', nid)
   state.loading = false
   info = { name: res.name, time: res.time, entry: res.entry, links: res.links, forms: {} }
-  if (links.U) isPublic = true
-  delete links.U
   for (const k in info.links) {
     if (k[k.length - 1] === 'F') info.forms[k] = JSON.parse(res[k] || '{}')
   }
@@ -96,7 +87,7 @@ async function delLink (id) {
   if (info.entry === id) delete info.entry
 }
 
-let simple = $ref(false)
+let simple = $ref(true)
 async function copyURL () {
   const url = window.location.origin + '/#/run/' + nid + (simple ? '?simple=1' : '')
   await navigator.clipboard.writeText(url)
@@ -151,15 +142,7 @@ async function copyURL () {
             </select>
           </label>
         </div>
-        <div class="p-3 m-2 bg-white shadow rounded" v-if="state.nodes[nid]?.role === 'owner'">
-          <h3 class="text-lg font-bold">{{ I('[[Permission|权限管理]]') }}</h3>
-          <hr>
-          <label class="block my-2 flex items-center">
-            <span class="font-bold mr-2">{{ I('[[Public|公开]]') }}</span>
-            <Toggle v-model="isPublic" />
-            <p class="text-xs text-gray-500">{{ I('[[accessible by link|可通过链接访问]]') }}</p>
-          </label>
-        </div>
+        <Permission v-if="links" :links="links" :nid="nid" />
       </div>
     </div>
   </div>

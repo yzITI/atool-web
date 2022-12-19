@@ -2,10 +2,10 @@
 import { watch } from 'vue'
 import state from '../state.js'
 import { I } from '../utils/string.js'
-import Toggle from '../components/Toggle.vue'
 import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
+import Permission from '../components/Permission.vue'
 import FormEditor from '../components/FormEditor.vue'
 import { Bars3Icon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
@@ -35,13 +35,6 @@ let editingType = $computed(() => {
   return b?._
 })
 
-let isPublic = $ref(false)
-
-watch($$(isPublic), async v => {
-  if (v) await srpc.U.putLinkTo(state.user?.token || '', '', nid, { role: 'viewer' })
-  else await srpc.U.delLinkTo(state.user?.token || '', 'U', nid)
-})
-
 function refreshLink () {
   if (state.user && state.nodes[nid] && state.nodes[nid].name !== info.name) state.nodes[nid].name = info.name
 }
@@ -57,8 +50,6 @@ async function init () {
   state.loading = false
   info = { name: res.name, time: res.time }
   form = []
-  if (links.U) isPublic = true
-  delete links.U
   for (let i = 0; ; i++) {
     if (!res[i]) break
     form.push(JSON.parse(res[i]))
@@ -112,15 +103,7 @@ async function submit () {
         <Editor class="h-40 my-2" language="json" v-model="ctx.json" />
         <button @click="updateState" class="bg-yellow-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">{{ I('[[Update State|更新状态]]') }}</button>
       </div>
-      <div class="p-3 m-2 bg-white shadow rounded" v-if="state.nodes[nid]?.role === 'owner'">
-        <h3 class="text-lg font-bold">{{ I('[[Permission|权限管理]]') }}</h3>
-        <hr>
-        <label class="block my-2 flex items-center">
-          <span class="font-bold mr-2">{{ I('[[Public|公开]]') }}</span>
-          <Toggle v-model="isPublic" />
-          <p class="text-xs text-gray-500">{{ I('[[accessible by link|可通过链接访问]]') }}</p>
-        </label>
-      </div>
+      <Permission v-if="links" :links="links" :nid="nid" />
     </div>
   </div>
 </template>
