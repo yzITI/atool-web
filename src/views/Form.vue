@@ -21,7 +21,10 @@ let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({ state: {}, 
 watch(() => ctx.state, v => {
   ctx.json = JSON.stringify(ctx.state, null, 2)
 }, { deep: true })
-function updateState () { ctx.state = JSON.parse(ctx.json) }
+
+watch(() => ctx.json, v => {
+  try { ctx.state = JSON.parse(ctx.json) } catch {}
+})
 
 let timeStr = $computed(() => {
   if (!info.time) return ''
@@ -99,9 +102,8 @@ async function submit () {
         <Component :is="blocks[editingType]?.panel" :i="editing" :form="form" :state="ctx.state" />
       </div>
       <div class="p-3 m-2 bg-white shadow rounded">
-        <h3 class="text-lg font-bold">{{ I('[[Realtime State|实时状态]]') }}</h3>
+        <h3 class="text-lg font-bold">{{ I('[[Realtime|实时]] state') }}</h3>
         <Editor class="h-40 my-2" language="json" v-model="ctx.json" />
-        <button @click="updateState" class="bg-yellow-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm font-bold text-white">{{ I('[[Update State|更新状态]]') }}</button>
       </div>
       <Permission v-if="links" :links="links" :nid="nid" />
     </div>
