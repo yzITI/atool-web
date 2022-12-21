@@ -42,7 +42,10 @@ async function create () {
   const id = await random() + on
   state.loading = true
   const res = await srpc[on].put(state.user.token, id, { name: I(newTitle[on]) })
-  if (res) return router.push(`/${on}/${id}`)
+  if (res) {
+    state.nodes[id] = { name: newTitle[on], role: 'owner' }
+    return router.push(`/${on}/${id}`)
+  }
   Swal.fire('Error', '', 'error')
   state.loading = false
 }

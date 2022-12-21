@@ -22,7 +22,7 @@ watch($$(isPublic), async v => {
 
 function roleClass (role) {
   if (role === 'owner') return 'border-red-500 text-red-500'
-  if (role === 'editor') return 'border-orange-500 text-orange-500'
+  if (role === 'editor') return 'border-amber-500 text-amber-500'
   if (role === 'viewer') return 'border-green-600 text-green-600'
 }
 
