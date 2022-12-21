@@ -74,9 +74,7 @@ async function del (id) {
     </h2>
     <div class="flex items-start font-bold text-gray-700 px-4 relative">
       <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'F' && 'bg-blue-500 text-white'" @click="on = 'F'"><SquaresPlusIcon class="w-5 mr-1" /> {{ I('[[Form|表单]]') }}</div>
-      <!--
       <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'D' && 'bg-blue-500 text-white'" @click="on = 'D'"><CircleStackIcon class="w-5 mr-1" />{{ I('[[Data|数据]]') }}</div>
-      -->
       <div class="rounded-t-lg all-transition bg-white px-3 py-1 cursor-pointer shadow flex items-center" :class="on === 'S' && 'bg-blue-500 text-white'" @click="on = 'S'"><CubeIcon class="w-5 mr-1" />{{ I('[[Service|服务]]') }}</div>
     </div>
     <div class="grow bg-white z-10 relative p-4 overflow-y-auto">
@@ -85,7 +83,7 @@ async function del (id) {
         <div class="flex items-center justify-between">
           <div class="flex items-center flex-wrap">
             <h3>{{ n.name }}</h3>
-            <code class="ml-1 px-1 text-gray-400 bg-gray-100" style="font-size: 0.65rem;">{{ id }}</code>
+            <code class="ml-1 px-1 text-gray-400 bg-gray-100 rounded select-all" style="font-size: 0.65rem;">{{ id }}</code>
           </div>
           <TrashIcon v-if="n.role === 'owner'" class="w-5 mx-1 text-red-500 cursor-pointer shrink-0" @click.stop="del(id)" />
         </div>

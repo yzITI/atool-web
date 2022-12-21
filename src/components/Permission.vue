@@ -87,7 +87,7 @@ async function addUser (user, name) {
         <UserIcon v-else class="w-6 mr-1" />
         <div class="flex flex-col items-start">
           {{ l.name }}
-          <code class="bg-gray-100 px-1 -mt-0.5 text-gray-500" style="font-size: 0.5rem;">{{ displayId(id) }}</code>
+          <code class="bg-gray-100 px-1 -mt-0.5 text-gray-500 rounded select-all" style="font-size: 0.5rem;">{{ displayId(id) }}</code>
         </div>
       </div>
       <select class="border rounded px-1 cursor-pointer" :value="l.role" @change="changeRole(id, $event)" :class="roleClass(l.role)">

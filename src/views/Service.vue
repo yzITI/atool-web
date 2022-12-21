@@ -1,23 +1,22 @@
 <script setup>
 import state from '../state.js'
 import { I } from '../utils/string.js'
-import Permission from '../components/Permission.vue'
 import srpc from '../utils/srpc.js'
+import Permission from '../components/Permission.vue'
 import Toggle from '../components/Toggle.vue'
 import Editor from '../components/Editor.vue'
 import NodeSelector from '../components/NodeSelector.vue'
-import { DocumentTextIcon, Bars3Icon, PencilSquareIcon, XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
+import { XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
 const nid = route.params.id
-let isAdmin = $computed(() => state.nodes[nid]?.role === 'owner')
 
 state.loading = true
 if (!state.user) router.push('/')
 else init()
 
-let info = $ref({}), links = $ref({}), coding = $ref(false), keyword = $ref(''), queryInput = $ref('')
+let info = $ref({}), links = $ref({}), coding = $ref(false)
 
 let timeStr = $computed(() => {
   if (!info.time) return ''
@@ -111,21 +110,46 @@ async function copyURL () {
       <button @click="submit" class="bg-blue-500 rounded shadow all-transition hover:shadow-md px-3 py-1 text-sm text-white">{{ I('[[Save|保存]]') }}</button>
     </h3>
     <div class="flex flex-col md:flex-row w-full md:items-start">
-      <div class="p-3 m-2 bg-white shadow rounded grow">
-        <h3 class="text-lg font-bold border-b flex items-center">
-          <SquaresPlusIcon class="w-6 mr-1" />
-          {{ I('[[Service Forms|服务表单]]') }}
-        </h3>
-        <div v-for="f, id in info.forms" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex">
-          <div>{{ info.links[id].name }}</div>
-          <div class="grow"></div>
-          <CodeBracketIcon class="w-5 mx-2 rounded cursor-pointer" :class="info.forms[id].code ? 'text-green-500' : 'text-gray-500'" @click="coding = id" />
-          <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
+      <div class="grow">
+        <div class="p-3 m-2 bg-white shadow rounded">
+          <h3 class="text-lg font-bold border-b flex items-center">
+            <SquaresPlusIcon class="w-6 mr-1" />
+            {{ I('[[Service Forms|服务表单]]') }}
+          </h3>
+          <div v-for="f, id in info.forms" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex items-center justify-between">
+            <div class="flex items-center">
+              {{ info.links[id].name }}
+              <code class="px-1 mx-1 bg-gray-100 text-gray-500 rounded select-all" style="font-size: 0.65rem;">{{ id }}</code>
+            </div>
+            <div class="flex items-center">
+              <CodeBracketIcon class="w-5 mx-2 rounded cursor-pointer" :class="info.forms[id].code ? 'text-green-500' : 'text-gray-500'" @click="coding = id" />
+              <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
+            </div>
+          </div>
+          <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'F'">
+            <PlusIcon class="w-6 mr-1"/>
+            {{ I('[[Add Form|添加表单]]') }}
+          </button>
         </div>
-        <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'F'">
-          <PlusIcon class="w-6 mr-1"/>
-          {{ I('[[Add Form|添加表单]]') }}
-        </button>
+        <div class="p-3 m-2 bg-white shadow rounded">
+          <h3 class="text-lg font-bold border-b flex items-center">
+            <CircleStackIcon class="w-6 mr-1" />
+            {{ I('[[Service Data|服务数据]]') }}
+          </h3>
+          <div v-for="f, id in info.data" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex items-center justify-between">
+            <div class="flex items-center">
+              {{ info.links[id].name }}
+              <code class="px-1 mx-1 bg-gray-100 text-gray-500 rounded select-all" style="font-size: 0.65rem;">{{ id }}</code>
+            </div>
+            <div class="flex items-center">
+              <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
+            </div>
+          </div>
+          <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'D'">
+            <PlusIcon class="w-6 mr-1"/>
+            {{ I('[[Add Data|添加数据]]') }}
+          </button>
+        </div>
       </div>
       <div class="md:w-96 xl:w-1/3">
         <div class="p-3 m-2 bg-white shadow rounded">

@@ -5,6 +5,7 @@ const index = {
   '/login': () => import('./views/Login.vue'),
   '/home': () => import('./views/Home.vue'),
   '/F/:id': () => import('./views/Form.vue'),
+  '/D/:id': () => import('./views/Data.vue'),
   '/S/:id': () => import('./views/Service.vue'),
   '/run/:id': () => import('./views/Run.vue')
 }

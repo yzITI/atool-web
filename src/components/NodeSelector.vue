@@ -57,7 +57,7 @@ function select (nid, name) {
         <UserIcon v-if="show === 'U'" class="w-6 mr-2" />
         <div class="flex flex-col items-start">
           {{ name }}
-          <code class="text-gray-400 -mt-0.5 px-1 bg-gray-100" style="font-size: 0.6rem;">{{ id }}</code>
+          <code class="text-gray-400 -mt-0.5 px-1 bg-gray-100 rounded select-all" style="font-size: 0.6rem;">{{ id }}</code>
         </div>
       </div>
     </div>
