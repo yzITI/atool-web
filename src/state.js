@@ -10,11 +10,9 @@ export const state = reactive({
   locale: Number(LS.locale || 0),
   loading: false,
   user: SS.user ? JSON.parse(SS.user) : null,
-  nodes: JSON.parse(SS.nodes || '{}')
+  nodes: JSON.parse(LS.nodes || '{}')
 })
 
-watch(() => state.nodes, v => {
-  SS.nodes = JSON.stringify(v)
-}, { deep: true })
+watch(() => state.nodes, v => { LS.nodes = JSON.stringify(v) }, { deep: true })
 
 export default state

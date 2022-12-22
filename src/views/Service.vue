@@ -126,11 +126,10 @@ async function createNode (on) {
   state.loading = true
   const res = await srpc[on].put(state.user.token, id, { name })
   state.loading = false
-  if (res) {
-    state.nodes[id] = { name, role: 'owner' }
-    return setTimeout(() => { window.open(`/#/${on}/${id}`) }, 100)
-  }
-  Swal.fire('Error', '', 'error')
+  if (!res) return Swal.fire('Error', '', 'error')
+  await putLink(id, name)
+  state.nodes[id] = { name, role: 'owner' }
+  return setTimeout(() => { window.open(`/#/${on}/${id}`) }, 100)
 }
 
 async function open (id) {
@@ -175,7 +174,7 @@ async function open (id) {
             {{ I('[[Service Forms|服务表单]]') }}
           </h3>
           <div v-for="f, id in info.forms" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex items-center justify-between">
-            <div class="flex items-center">
+            <div class="flex items-center flex-wrap">
               {{ info.links[id].name }}
               <code class="px-1 mx-1 bg-gray-100 text-gray-500 rounded select-all" style="font-size: 0.65rem;">{{ id }}</code>
             </div>
@@ -191,7 +190,7 @@ async function open (id) {
               <PlusIcon class="w-6 mr-1"/>
               {{ I('[[Add Form|添加表单]]') }}
             </button>
-            <button class="flex items-center px-3 py-1 ml-2 bg-yellow-600 rounded text-white font-bold my-2" @click="createNode('F')">{{ I('[[Create Form|创建表单]]') }}</button>
+            <button class="flex items-center px-3 py-1 ml-2 bg-yellow-600 rounded text-white font-bold my-2" @click="createNode('F')">{{ I('[[Create & Add|创建并添加]]') }}</button>
           </div>
         </div>
         <div class="p-3 m-2 bg-white shadow rounded">
@@ -200,7 +199,7 @@ async function open (id) {
             {{ I('[[Service Data|服务数据]]') }}
           </h3>
           <div v-for="d, id in info.data" class="all-transition border-b border-gray-200 hover:bg-gray-100 bg-white p-2 text-gray-700 flex items-center justify-between">
-            <div class="flex items-center">
+            <div class="flex items-center flex-wrap">
               {{ info.links[id].name }}
               <code class="px-1 mx-1 bg-gray-100 text-gray-500 rounded select-all" style="font-size: 0.65rem;">{{ id }}</code>
             </div>
@@ -218,7 +217,7 @@ async function open (id) {
               <PlusIcon class="w-6 mr-1"/>
               {{ I('[[Add Data|添加数据]]') }}
             </button>
-            <button class="flex items-center px-3 py-1 ml-2 bg-yellow-600 rounded text-white font-bold my-2" @click="createNode('D')">{{ I('[[Create Data|创建数据]]') }}</button>
+            <button class="flex items-center px-3 py-1 ml-2 bg-yellow-600 rounded text-white font-bold my-2" @click="createNode('D')">{{ I('[[Create & Add|创建并添加]]') }}</button>
           </div>
         </div>
       </div>

@@ -34,7 +34,8 @@ async function init () {
   }
   name = res.name
   ctx = res.ctx
-  ctx.state = decodeJSON(route.query.state)
+  try { ctx.state = { ...JSON.parse(res.form.state), ...decodeJSON(route.query.state) } }
+  catch { ctx.state = decodeJSON(route.query.state) }
   parseForm(res.form)
 }
 init()

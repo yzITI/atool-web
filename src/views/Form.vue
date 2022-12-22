@@ -18,7 +18,7 @@ let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.node
 state.loading = true
 init()
 
-let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({ state: decodeJSON(route.query.state) })
+let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({})
 watch(() => ctx.state, v => {
   ctx.json = JSON.stringify(ctx.state, null, 2)
 }, { deep: true, immediate: true })
@@ -52,7 +52,9 @@ async function init () {
   }
   links = await srpc.U.getLinkFrom(state.user?.token || '', nid)
   state.loading = false
-  info = { name: res.name, time: res.time }
+  info = { name: res.name, time: res.time, state: res.state }
+  try { ctx.state = { ...JSON.parse(info.state), ...decodeJSON(route.query.state) } }
+  catch { ctx.state = decodeJSON(route.query.state) }
   form = []
   for (let i = 0; ; i++) {
     if (!res[i]) break
@@ -65,7 +67,7 @@ let showPanel = $ref(false)
 
 async function submit () {
   if (!state.user?.token) return
-  const data = { name: info.name }
+  const data = { name: info.name, state: info.state || '{}' }
   for (let i = 0; i < form.length; i++) {
     data[i] = JSON.stringify(form[i])
   }
@@ -105,6 +107,7 @@ async function submit () {
       <div class="p-3 m-2 bg-white shadow rounded">
         <h3 class="text-lg font-bold">{{ I('[[Realtime|实时]] state') }}</h3>
         <Editor class="h-40 my-2" language="json" v-model="ctx.json" />
+        <button v-if="editable && info.state !== ctx.json" @click="info.state = ctx.json" class="bg-yellow-600 rounded shadow all-transition hover:shadow-md px-3 py-1 m-1 text-sm text-white font-bold">{{ I('[[Set as initial state|设为初始state]]') }}</button>
       </div>
       <Permission v-if="links" :links="links" :nid="nid" />
     </div>
