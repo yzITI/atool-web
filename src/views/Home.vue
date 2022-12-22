@@ -51,7 +51,6 @@ async function create () {
 }
 
 async function del (id) {
-  console.log(id, state.nodes[id])
   const { isConfirmed } = await Swal.fire({
     title: I('[[Dangerous Operation|危险操作]]'),
     html: I(`[[You are deleting node|您正在删除实例]]<br>${state.nodes[id].name}(<code>${id}</code>)<br><b>[[All data and permissions will be deleted|所有相关数据和权限都将被删除]]</b>`),

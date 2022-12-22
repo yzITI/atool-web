@@ -2,6 +2,7 @@
 import state from '../state.js'
 import srpc from '../utils/srpc.js'
 import { CubeIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
+import { decodeJSON } from '../utils/crypto.js'
 import { I } from '../utils/string.js'
 import Form from '../components/Form.vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -33,6 +34,7 @@ async function init () {
   }
   name = res.name
   ctx = res.ctx
+  ctx.state = decodeJSON(route.query.state)
   parseForm(res.form)
 }
 init()

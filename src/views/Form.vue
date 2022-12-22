@@ -2,6 +2,7 @@
 import { watch } from 'vue'
 import state from '../state.js'
 import { I } from '../utils/string.js'
+import { decodeJSON } from '../utils/crypto.js'
 import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
 import Editor from '../components/Editor.vue'
@@ -12,15 +13,15 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
 const nid = route.params.id
-let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.nodes[nid]?.role === 'owner')
+let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.nodes[nid]?.role === 'owner' || route.query.edit)
 
 state.loading = true
 init()
 
-let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({ state: {}, json: '{}' })
+let info = $ref({}), links = $ref({}), form = $ref([]), ctx = $ref({ state: decodeJSON(route.query.state) })
 watch(() => ctx.state, v => {
   ctx.json = JSON.stringify(ctx.state, null, 2)
-}, { deep: true })
+}, { deep: true, immediate: true })
 
 watch(() => ctx.json, v => {
   try { ctx.state = JSON.parse(ctx.json) } catch {}

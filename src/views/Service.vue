@@ -114,6 +114,24 @@ async function copyURL () {
   await navigator.clipboard.writeText(url)
   Swal.fire(I('[[Link Copied|链接已复制]]'), '', 'success')
 }
+
+const newTitle = {
+  F: '[[New Form|新建表单]]',
+  D: '[[New Data|新建数据]]'
+}
+const random = () => Math.random().toString(36).substr(2, 8) + Math.random().toString(36).substr(2, 7)
+
+async function createNode (on) {
+  const id = await random() + on, name = nid.substring(0, 4) + '.' + I(newTitle[on])
+  state.loading = true
+  const res = await srpc[on].put(state.user.token, id, { name })
+  state.loading = false
+  if (res) {
+    state.nodes[id] = { name, role: 'owner' }
+    return window.open(`/#/${on}/${id}?edit=1`)
+  }
+  Swal.fire('Error', '', 'error')
+}
 </script>
 
 <template>
@@ -162,10 +180,13 @@ async function copyURL () {
               <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
             </div>
           </div>
-          <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'F'">
-            <PlusIcon class="w-6 mr-1"/>
-            {{ I('[[Add Form|添加表单]]') }}
-          </button>
+          <div class="flex items-center">
+            <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'F'">
+              <PlusIcon class="w-6 mr-1"/>
+              {{ I('[[Add Form|添加表单]]') }}
+            </button>
+            <button class="flex items-center px-3 py-1 ml-2 bg-yellow-600 rounded text-white font-bold my-2" @click="createNode('F')">{{ I('[[Create Form|创建表单]]') }}</button>
+          </div>
         </div>
         <div class="p-3 m-2 bg-white shadow rounded">
           <h3 class="text-lg font-bold border-b flex items-center">
@@ -185,10 +206,13 @@ async function copyURL () {
               <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
             </div>
           </div>
-          <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'D'">
-            <PlusIcon class="w-6 mr-1"/>
-            {{ I('[[Add Data|添加数据]]') }}
-          </button>
+          <div class="flex items-center">
+            <button class="flex items-center px-3 py-1 bg-green-600 rounded text-white font-bold my-2" @click="showSelector = 'D'">
+              <PlusIcon class="w-6 mr-1"/>
+              {{ I('[[Add Data|添加数据]]') }}
+            </button>
+            <button class="flex items-center px-3 py-1 ml-2 bg-yellow-600 rounded text-white font-bold my-2" @click="createNode('D')">{{ I('[[Create Data|创建数据]]') }}</button>
+          </div>
         </div>
       </div>
       <div class="md:w-96 xl:w-1/3">
