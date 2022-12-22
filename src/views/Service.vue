@@ -6,7 +6,7 @@ import Permission from '../components/Permission.vue'
 import Toggle from '../components/Toggle.vue'
 import Editor from '../components/Editor.vue'
 import NodeSelector from '../components/NodeSelector.vue'
-import { CheckCircleIcon, XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
+import { CheckCircleIcon, XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon, ArrowUpOnSquareIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
@@ -128,9 +128,14 @@ async function createNode (on) {
   state.loading = false
   if (res) {
     state.nodes[id] = { name, role: 'owner' }
-    return window.open(`/#/${on}/${id}?edit=1`)
+    return setTimeout(() => { window.open(`/#/${on}/${id}`) }, 100)
   }
   Swal.fire('Error', '', 'error')
+}
+
+async function open (id) {
+  const type = id[id.length - 1]
+  window.open(`/#/${type}/${id}`)
 }
 </script>
 
@@ -175,9 +180,10 @@ async function createNode (on) {
               <code class="px-1 mx-1 bg-gray-100 text-gray-500 rounded select-all" style="font-size: 0.65rem;">{{ id }}</code>
             </div>
             <div class="flex items-center">
-              <CodeBracketIcon class="w-5 mx-2 rounded cursor-pointer" :class="info.forms[id].code ? 'text-green-500' : 'text-gray-500'" @click="showCode = id" />
-              <CircleStackIcon class="w-5 mx-2 rounded cursor-pointer" :class="info.forms[id].data?.length ? 'text-amber-500' : 'text-gray-500'" @click="showData = id" />
-              <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
+              <ArrowUpOnSquareIcon class="w-5 mx-1 rounded cursor-pointer text-blue-500" @click="open(id)" />
+              <CodeBracketIcon class="w-5 mx-1 rounded cursor-pointer" :class="info.forms[id].code ? 'text-green-500' : 'text-gray-500'" @click="showCode = id" />
+              <CircleStackIcon class="w-5 mx-1 rounded cursor-pointer" :class="info.forms[id].data?.length ? 'text-amber-500' : 'text-gray-500'" @click="showData = id" />
+              <XMarkIcon class="w-5 mx-1 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
             </div>
           </div>
           <div class="flex items-center">
@@ -203,7 +209,8 @@ async function createNode (on) {
                 <option value="editor">Editor</option>
                 <option value="viewer">Viewer</option>
               </select>
-              <XMarkIcon class="w-5 mx-2 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
+              <ArrowUpOnSquareIcon class="w-5 mx-1 rounded cursor-pointer text-blue-500" @click="open(id)" />
+              <XMarkIcon class="w-5 mx-1 rounded cursor-pointer text-red-500" @click="delLink(id)"/>
             </div>
           </div>
           <div class="flex items-center">

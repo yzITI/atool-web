@@ -13,7 +13,7 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
 
 const nid = route.params.id
-let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.nodes[nid]?.role === 'owner' || route.query.edit)
+let editable = $computed(() => state.nodes[nid]?.role === 'editor' || state.nodes[nid]?.role === 'owner')
 
 state.loading = true
 init()
