@@ -36,7 +36,7 @@ function signin () {
         <HomeIcon class="w-6 mr-2" />{{ I('[[My nodes|我的实例]]') }}
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
-        <p class="cursor-pointer" @click="goto('/about')">{{ I('[[About|关于]]') }}</p>
+        <p class="cursor-pointer" @click="goto('/doc')">{{ I('[[Document|查看文档]]') }}</p>
         <p>&copy; yzITI 2022</p>
       </div>
     </Wrapper>

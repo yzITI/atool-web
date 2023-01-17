@@ -22,7 +22,7 @@ let page = $computed(() => {
 <template>
   <div class="w-full h-12 px-4 bg-white shadow flex items-center justify-between relative z-30">
     <div class="flex items-center">
-      <h1 class="font-bold text-2xl cursor-pointer select-none" @click="router.push('/')">Atool</h1>
+      <h1 class="font-bold text-2xl cursor-pointer select-none" @click="router.push('/')">ATool</h1>
       <div v-if="page" class="font-bold ml-2 text-2xl select-none">{{ page }}</div>
     </div>
     <div class="flex items-center">
