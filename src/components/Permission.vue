@@ -13,7 +13,7 @@ let isPublic = $ref(Boolean(props.links.U))
 
 delete props.links.U
 
-const links = $ref(props.links)
+let links = $ref(props.links)
 
 watch($$(isPublic), async v => {
   if (v) await srpc.U.putLinkTo(state.user.token, '', props.nid, { role: 'viewer' })

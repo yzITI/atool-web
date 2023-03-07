@@ -1,4 +1,4 @@
-let url = 'https://atool.aauth.link/srpc'
+let url = 'https://a.aauth.link/atool'
 
 const getFunction = name => ((...args) => fetch(url, {
   method: 'POST', mode: 'cors', cache: 'no-cache',
