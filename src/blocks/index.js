@@ -7,7 +7,7 @@ const blocks = {
     name: 'Code',
     block: () => import('./Code.vue'),
     panel: () => import('./CodePanel.vue'),
-    template: { code: 'const S = ctx.state\nS.hi = \'hello!\'', editable: true, visible: true, height: '200px' }
+    template: { code: 'const S = ctx.state\nS.hi = \'hello!\'', editable: true, visible: true, height: 'auto' }
   },
   html: {
     name: 'HTML',

@@ -4,7 +4,7 @@ import { I } from '../utils/string.js'
 import srpc from '../utils/srpc.js'
 import Permission from '../components/Permission.vue'
 import Toggle from '../components/Toggle.vue'
-import Editor from '../components/Editor.vue'
+import CodeMirror from '../components/CodeMirror.vue'
 import NodeSelector from '../components/NodeSelector.vue'
 import { CheckCircleIcon, XMarkIcon, PlusIcon, CodeBracketIcon, SquaresPlusIcon, CircleStackIcon, ArrowUpOnSquareIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
@@ -140,7 +140,7 @@ async function open (id) {
 
 <template>
   <Transition name="fade">
-    <div class="fixed z-20 top-0 left-0 w-screen h-screen flex items-center justify-center" v-if="showCode || showData">
+    <div class="fixed z-40 top-0 left-0 w-screen h-screen flex items-center justify-center" v-if="showCode || showData">
       <div class="h-full w-full bg-black opacity-50 absolute" @click="showCode = showData = false" />
       <div v-if="showData" class="w-96 h-1/2 bg-white z-20 shadow rounded p-4 overflow-y-auto" :set="f = info.forms[showData]">
         <h3 class="text-lg font-bold">{{ I('[[Select Data for the Form|配置表单代码可访问的数据]]') }}</h3>
@@ -155,9 +155,9 @@ async function open (id) {
       </div>
     </div>
   </Transition>
-  <div class="all-transition fixed z-20 p-2 w-11/12 md:w-2/3 bg-white h-screen" :class="showCode ? 'right-0' : '-right-full'">
-    <div class="text-sm text-gray-500 mb-2">{{ I('[[Backend Code|后端代码]]') }}</div>
-    <Editor v-if="showCode" v-model="info.forms[showCode].code" class="h-full" />
+  <div class="all-transition fixed z-40 w-11/12 md:w-2/3 bg-white h-screen overflow-y-auto top-0" :class="showCode ? 'right-0' : '-right-full'">
+    <div class="text-sm text-gray-500 m-2"><code>{{ showCode }}</code>{{ I('[[Backend Code|后端代码]]') }}</div>
+    <CodeMirror v-if="showCode" class="m-2" v-model="info.forms[showCode].code" />
   </div>
   <NodeSelector v-model="showSelector" @select="putLink" />
   <!-- main UI -->

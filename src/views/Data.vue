@@ -3,7 +3,7 @@ import state from '../state.js'
 import { I } from '../utils/string.js'
 import srpc from '../utils/srpc.js'
 import Permission from '../components/Permission.vue'
-import Editor from '../components/Editor.vue'
+import CodeMirror from '../components/CodeMirror.vue'
 import { CircleStackIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
@@ -77,7 +77,7 @@ async function submit () {
     <div class="flex flex-col md:flex-row w-full md:items-start grow">
       <div class="m-2 p-3 grow h-full bg-white shadow rounded" style="height: calc(100% - 0.6rem);">
         <div class="h-full">
-          <Editor v-model="json" language="json" class="h-full" />
+          <CodeMirror v-model="json" language="json" class="h-full" />
         </div>
       </div>
       <div class="md:w-96 xl:w-1/3" v-if="links">

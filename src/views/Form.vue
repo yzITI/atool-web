@@ -5,7 +5,7 @@ import { I } from '../utils/string.js'
 import { decodeJSON } from '../utils/crypto.js'
 import srpc from '../utils/srpc.js'
 import blocks from '../blocks/index.js'
-import Editor from '../components/Editor.vue'
+import CodeMirror from '../components/CodeMirror.vue'
 import Permission from '../components/Permission.vue'
 import FormEditor from '../components/FormEditor.vue'
 import { Bars3Icon } from '@heroicons/vue/24/outline'
@@ -106,7 +106,7 @@ async function submit () {
       </div>
       <div class="p-3 m-2 bg-white shadow rounded">
         <h3 class="text-lg font-bold">{{ I('[[Realtime|实时]] state') }}</h3>
-        <Editor class="h-40 my-2" language="json" v-model="ctx.json" />
+        <CodeMirror class="my-2" language="json" v-model="ctx.json" />
         <button v-if="editable && info.state !== ctx.json" @click="info.state = ctx.json" class="bg-yellow-600 rounded shadow all-transition hover:shadow-md px-3 py-1 m-1 text-sm text-white font-bold">{{ I('[[Set as initial state|设为初始state]]') }}</button>
       </div>
       <Permission v-if="links" :links="links" :nid="nid" />

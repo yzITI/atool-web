@@ -2,7 +2,7 @@
 import { PlayIcon } from '@heroicons/vue/24/solid'
 import { I } from '../utils/string.js'
 import { run } from '../utils/sandbox.js'
-import Editor from '../components/Editor.vue'
+import CodeMirror from '../components/CodeMirror.vue'
 const props = defineProps(['i', 'form', 'state'])
 let block = $computed(() => props.form[props.i])
 let running = $ref(false), error = $ref('')
@@ -36,5 +36,5 @@ async function exec () {
     <span class="ml-2 text-gray-500 text-xs">{{ I('[[Code will run on your device|代码将在您的设备上执行]]') }}</span>
   </div>
   <pre v-if="error" class="bg-red-50 text-red-500 px-2 py-1 text-xs my-2">{{ error }}</pre>
-  <Editor v-if="block.visible" :read-only="!block.editable" class="my-2" :style="{ height: block.height }" v-model="block.code" />
+  <CodeMirror v-if="block.visible" :read-only="!block.editable" language="javascript" class="my-2 overflow-auto" :style="{ height: block.height || 'auto' }" v-model="block.code" />
 </template>
