@@ -1,9 +1,6 @@
 <script setup>
 import { onMounted, watch } from 'vue'
 import { EditorView, basicSetup } from 'codemirror'
-import { html } from '@codemirror/lang-html'
-import { javascript } from '@codemirror/lang-javascript'
-import { json } from '@codemirror/lang-json'
 import debounce from '../utils/debounce.js'
 const props = defineProps(['modelValue', 'language', 'readOnly'])
 const emits = defineEmits(['update:modelValue'])
@@ -19,16 +16,16 @@ const inputListener = EditorView.updateListener.of(v => {
   update()
 })
 
-function getLang () {
-  if (props.language === 'javascript') return javascript()
-  if (props.language === 'html') return html()
-  return json()
+async function getLang () {
+  if (props.language === 'javascript') return (await import('@codemirror/lang-javascript')).javascript()
+  if (props.language === 'html') return (await import('@codemirror/lang-html')).html()
+  if (props.language === 'json') return (await import('@codemirror/lang-json')).json()
 }
 
-onMounted(() => {
+onMounted(async () => {
   editor = new EditorView({
     doc: props.modelValue || '',
-    extensions: [basicSetup, getLang(), inputListener, EditorView.lineWrapping],
+    extensions: [basicSetup, await getLang(), inputListener, EditorView.lineWrapping],
     parent: el
   })
 })
