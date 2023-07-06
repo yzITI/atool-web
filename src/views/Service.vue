@@ -157,7 +157,7 @@ async function open (id) {
   </Transition>
   <div class="all-transition fixed z-40 w-11/12 md:w-2/3 bg-white h-screen overflow-y-auto top-0" :class="showCode ? 'right-0' : '-right-full'">
     <div class="text-sm text-gray-500 m-2"><code>{{ showCode }}</code>{{ I('[[Backend Code|后端代码]]') }}</div>
-    <CodeMirror v-if="showCode" class="m-2" v-model="info.forms[showCode].code" />
+    <CodeMirror v-if="showCode" class="m-2" language="javascript" v-model="info.forms[showCode].code" />
   </div>
   <NodeSelector v-model="showSelector" @select="putLink" />
   <!-- main UI -->
