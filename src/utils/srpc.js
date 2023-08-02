@@ -1,4 +1,4 @@
-let url = 'https://a.aauth.link/atool'
+let url = 'https://a.njsc.ltd/atool'
 
 const getFunction = name => ((...args) => fetch(url, {
   method: 'POST', mode: 'cors', cache: 'no-cache',
