@@ -15,7 +15,7 @@ function goto (path) {
 }
 
 function signin () {
-  window.location.href = 'https://cn.njsc.ltd/#/launch/atool'
+  window.location.href = 'https://cn.aauth.link/#/launch/atool'
 }
 </script>
 
