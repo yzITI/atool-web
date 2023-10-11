@@ -32,7 +32,13 @@ const blocks = {
     block: () => import('./Select.vue'),
     panel: () => import('./SelectPanel.vue'),
     template: { key: 'select', label: 'label', options: [], hint: '' }
-  } 
+  },
+  table: {
+    name: 'Table',
+    block: () => import('./Table.vue'),
+    panel: () => import('./TablePanel.vue'),
+    template: { key: 'data', label: 'Table Title', columns: [{ key: 'name', label: 'Name' }] }
+  }
 }
 
 for (const k in blocks) {
