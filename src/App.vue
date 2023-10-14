@@ -9,7 +9,7 @@ import state from './state.js'
 <template>
   <div class="w-full min-h-screen bg-gray-100">
     <Bar v-if="!route.query.simple"></Bar>
-    <div :style="{ height: route.query.simple ? '100vh' : 'calc(100vh - 3rem)', overflow: 'auto' }">
+    <div :style="{ height: route.query.simple ? '100vh' : 'calc(100vh - 3rem)', overflow: 'auto' }" id="container">
       <RouterView></RouterView>
     </div>
   </div>

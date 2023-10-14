@@ -54,6 +54,7 @@ async function next () {
   name = res.name
   ctx = res.ctx
   parseForm(res.form)
+  document.getElementById('container').scrollTo(0, 0)
 }
 </script>
 
