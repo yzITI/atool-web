@@ -1,5 +1,6 @@
 <script setup>
 import EditableList from '../components/EditableList.vue'
+import Toggle from '../components/Toggle.vue'
 import { I } from '../utils/string.js'
 import { PlusIcon } from '@heroicons/vue/24/outline'
 const props = defineProps(['i', 'form', 'state'])
@@ -22,6 +23,10 @@ async function create () {
   <label class="block my-2">
     <span class="font-bold block">{{ I('[[Label|标签]]') }}</span>
     <input class="border rounded px-2 py-1 w-full" type="text" placeholder="select label" v-model="block.label">
+  </label>
+  <label class="block my-2 flex items-center">
+    <span class="font-bold mr-2">{{ I('[[Multiple|可多选]]') }}</span>
+    <Toggle v-model="block.multiple" />
   </label>
   <label class="block my-2">
     <span class="font-bold block">{{ I('[[Options|选项]]') }}</span>
