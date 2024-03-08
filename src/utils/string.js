@@ -20,7 +20,7 @@ export function I (template, choice = state.locale) {
   return res
 }
 
-export function IT (template, data, choice = locale) {
+export function IT (template, data, choice = state.locale) {
   return I(T(template, data), choice)
 }
 

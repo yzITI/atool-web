@@ -48,12 +48,15 @@ function select (nid, name) {
   </Transition>
   <div class="all-transition fixed z-50 w-11/12 md:w-1/3 bg-white h-screen top-0 overflow-y-auto" :class="show ? 'right-0' : '-right-full'">
     <h4 class="text-lg font-bold text-center my-2">{{ I(titles[show]) }}</h4>
-    <input class="w-full block py-1 px-2 text-sm font-mono border" :placeholder="I('[[Enter to Search ID|回车搜索ID]]')" @change="searchResult = null; searchTip = ''" v-model="keyword" @keyup.enter="search">
-    <p class="text-xs text-gray-400 px-2">{{ searchTip }}</p>
+    <div class="mx-4">
+      <input class="block py-1 px-2 w-full text-sm font-mono border focus:border-blue-500" :placeholder="I('[[Enter to Search ID|回车搜索ID]]')" @change="searchResult = null; searchTip = ''" v-model="keyword" @keyup.enter="search">
+    </div>
+    <p class="text-xs text-gray-400 px-2 mx-4">{{ searchTip }}</p>
     <div class="p-2 mt-2">
       <hr>
       <div v-for="(name, id) in list" class="p-1 cursor-pointer all-transition flex items-center border-b border-gray-200 hover:bg-gray-100" @click="select(id, name)">
         <SquaresPlusIcon v-if="show === 'F'" class="w-6 mr-2" />
+        <CircleStackIcon v-if="show === 'D'" class="w-6 mr-2" />
         <UserIcon v-if="show === 'U'" class="w-6 mr-2" />
         <div class="flex flex-col items-start">
           {{ name }}

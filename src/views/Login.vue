@@ -1,21 +1,13 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { decodeJSON } from '../utils/crypto.js'
-import { state, SS } from '../state'
+import { state, login } from '../state'
 const route = useRoute(), router = useRouter()
 const token = route.query.token
 
-state.loading = true
-
-if (token) {
-  state.user = decodeJSON(token.split('.')[1])
-  state.user.token = token
-  SS.user = JSON.stringify(state.user)
-  state.loading = false
-}
-
-router.push('/')
+if (login(token)) router.push('/home')
+else window.location.href = 'https://auth.njsc.ltd/#/launch/atool'
 </script>
 
 <template>
+  <p class="p-3">Loading...</p>
 </template>

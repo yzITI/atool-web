@@ -1,11 +1,11 @@
 <script setup>
-import { T } from '../utils/string.js'
+import { IT } from '../utils/string.js'
 const props = defineProps(['i', 'form', 'state'])
 let block = $computed(() => props.form[props.i])
 </script>
 
 <template>
-  <div v-html="T(block?.html, props.state)" />
+  <div v-html="IT(block?.html, props.state)" />
 </template>
 
 <style scoped>
